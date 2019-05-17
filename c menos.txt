@@ -1,8 +1,8 @@
 Gramática - C Menos
 
-Alfabeto = ID, NUM, [, ], int, void, (, ), vírgula , if, else, while, return, read, write, =, <=, <, >, >=, ==, !=, +, -, *, /
+Alfabeto = ID, NUM, [, ], int, void, (, ), vírgula , if, else, while, return, read, write, =, <=, <, >, >=, ==, !=, +, -, *, /, {, }
 
-Um char: [,], (, ), vírgula, =, <, >, +, -, *, /
+Um char: [,], (, ), vírgula, =, <, >, +, -, *, /, {, }
 Dois char: if, <=, >=, ==, !=
 Três char: int
 Quatro char: void, else, read
@@ -14,25 +14,24 @@ P = {
 	<program> ::= <declaration-list>
 	<declaration-list> ::= <declaration> <declaration-list> | <declaration>
     <declaration> ::= <var-declaration> | <fun-declaration>
-    * <var-declaration> ::= <type-specifier> <ID> ; | <type-specifier> <ID> [NUM] ;
+    <var-declaration> ::= <type-specifier> <ID> ; | <type-specifier> <ID> [NUM] ;
     <type-specifier> ::= int | void
     <fun-declaration> ::= <type-specifier> <ID> ( <params> ) <compound-stmt>
     <params> ::= void | <param-list>
 	<param-list> ::= <param> , <param-list> | <param>
-    * <param> ::= <type-specifier> <ID> | <type-specifier> <ID> []
-	* <compound-stmt> ::= { <local-declarations> <statement-list> }
+    <param> ::= <type-specifier> <ID> | <type-specifier> <ID> []
+	<compound-stmt> ::= { <local-declarations> <statement-list> }
     <local-declarations> ::= <var-declaration> <local-declarations> | <var-declaration>
     <statement-list> ::= <statement><statement-list> | <statement>
-    * <statement> :: = <expression-stmt> | <compound-stmt> | <selection-stmt> | <iteration-stmt> |  <return-stmt> | <read-stmt> | <write-stmt>
+    <statement> :: = <expression-stmt> | <compound-stmt> | <selection-stmt> | <iteration-stmt> |  <return-stmt> | <read-stmt> | <write-stmt>
     <expression-stmt> ::= <expression> ; | ;
     <selection-stmt> ::= if ( <expression> ) <statement> | if (<expression>) <statement> else <statement>
     <iteration-stmt> ::= while ( <expression> ) <statement> 
-    * <return-stmt> ::= return ; | return <expression> ;
+    <return-stmt> ::= return ; | return <expression> ;
     <read-stmt> ::= read <variable> ;
     <write-stmt> ::= write <expression>;
-    * <expression> ::= <variable> = <expression> | <simple-expression>
-    * removido -> <var-rep> ::= <variable> = <var-rep> | vazio
-    * <variable> ::= <ID> |<ID> [<expression>]
+    <expression> ::= <variable> = <expression> | <simple-expression>
+    <variable> ::= <ID> |<ID> [<expression>]
 	* <simple-expression> ::= <additive-expression> |  <additive-expression> <relop> <simple-expression>
     <relop> ::= <= | < | > | >= | == | !=  
 	* <additive-expression> ::= <term> <addop> <additive-expression> | <term>

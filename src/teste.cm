@@ -2,7 +2,7 @@ int x;
 int y;
 int k;
 
-int abc (int qwe, int lol)
+int abc (int qwe, int lol){
 	int aa;
 	int bb;
 	int cc;
@@ -30,6 +30,8 @@ int abc (int qwe, int lol)
 	ee[8] = dd >= cc;
 
 	return aa;
+}
 
-int main(void)
+int main(void){
 	return 1;
+}

@@ -17,23 +17,33 @@ fun declaration(): Boolean {
     return false
 }
 
-//TODO: Não dá pra criar variável sem ser array?
+
 fun varDeclaration(): Boolean {
     val cursorInicio = cursor
 
     if(typeSpecifier()){
         if(tokens[cursor++].tipo == Tipo.IDENTIFICADOR){
 
-            if(tokens[cursor++].tipo == Tipo.COLESQ){
+            if(tokens[cursor].tipo == Tipo.COLESQ){
+                cursor++
 
-                if(tokens[cursor].tipo == Tipo.NUMERO){
-                    cursor++
-                }
-
-                if(tokens[cursor++].tipo == Tipo.COLDIR){
-                    return true
+                if(tokens[cursor++].tipo == Tipo.NUMERO){
+                    if(tokens[cursor++].tipo == Tipo.COLDIR){
+                        //Geração de código aqui
+                    }else{
+                        cursor = cursorInicio
+                        return false
+                    }
+                }else{
+                    cursor = cursorInicio
+                    return false
                 }
             }
+
+            if(tokens[cursor++].tipo == Tipo.PONTOEVIRGULA){
+                return true
+            }
+
         }
     }
 
@@ -114,12 +124,18 @@ fun param(): Boolean {
     if(typeSpecifier()){
         if(tokens[cursor++].tipo == Tipo.IDENTIFICADOR){
 
-            if(tokens[cursor++].tipo == Tipo.COLESQ){
+            if(tokens[cursor].tipo == Tipo.COLESQ){
+                cursor++
 
-                if(tokens[cursor++].tipo == Tipo.COLDIR){
-                    return true
+                return if(tokens[cursor++].tipo == Tipo.COLDIR){
+                    true
+                }else{
+                    cursor = cursorInicio
+                    false
                 }
             }
+
+            return true
         }
     }
 
@@ -128,12 +144,21 @@ fun param(): Boolean {
 }
 
 fun compoundStmt(): Boolean {
-    if(!localDeclarations()) return false
-    if(!statementList()) return false
-    while(localDeclarations()){
-        if(!statementList()) return false
+    val cursorInicio = cursor
+
+    if(tokens[cursor++].tipo == Tipo.CHAVEESQ){
+        if(localDeclarations()){
+            if(statementList()){
+                if(tokens[cursor++].tipo == Tipo.CHAVEDIR){
+                    return true
+                }
+            }
+        }
+
     }
-    return true
+
+    cursor = cursorInicio
+    return false
 }
 
 fun localDeclarations(): Boolean {
@@ -157,7 +182,6 @@ fun statement(): Boolean {
     if(compoundStmt()) return true
     if(selectionStmt()) return true
     if(iterationStmt()) return true
-    if(assignmentStmt()) return true
     if(returnStmt()) return true
     if(readStmt()) return true
     if(writeStmt()) return true
@@ -218,19 +242,16 @@ fun iterationStmt(): Boolean {
     return false
 }
 
-//TODO: Não está na gramática
-fun assignmentStmt(): Boolean {
-    return false
-}
-
 fun returnStmt(): Boolean {
     val cursorInicio = cursor
 
     if(tokens[cursor++].tipo == Tipo.RETURN){
         if(expression()){
-            if(tokens[cursor++].tipo == Tipo.PONTOEVIRGULA){
-                return true
-            }
+            //Geração de código aqui
+        }
+
+        if(tokens[cursor++].tipo == Tipo.PONTOEVIRGULA){
+            return true
         }
     }
 
@@ -269,55 +290,63 @@ fun writeStmt(): Boolean {
 }
 
 fun expression(): Boolean {
-    if(!varRep()) return false
-    if(!simpleExpression()) return false
-    return true
-}
 
-fun varRep(): Boolean {
-    val cursorInicio = cursor
-    while(variable()){
-        if(tokens[cursor++].tipo != Tipo.RECEBE){
-            cursor = cursorInicio
-            return false
+    if(simpleExpression()) return true
+
+    if(variable()){
+        if(tokens[cursor].tipo == Tipo.RECEBE){
+            cursor++
+            if (expression()){
+                return true
+            }
+            cursor--
         }
     }
 
-    return true
+    return false
 }
 
 
-//TODO: Pode ter variável sem os colchetes?
 fun variable(): Boolean {
     val cursorInicio = cursor
 
     if(tokens[cursor++].tipo == Tipo.IDENTIFICADOR){
-        if(tokens[cursor++].tipo == Tipo.COLESQ){
-            if(expression()){
+        if(tokens[cursor].tipo == Tipo.COLESQ){
+            cursor++
+            return if(expression()){
                 if(tokens[cursor++].tipo == Tipo.COLDIR){
-                    return true
+                    true
+                }else{
+                    cursor = cursorInicio
+                    false
                 }
+            }else{
+                cursor = cursorInicio
+                false
             }
         }
+
+        return true
     }
 
     cursor = cursorInicio
     return false
 }
 
+//TODO: Está errado, consertar
 fun simpleExpression(): Boolean {
-    if(additiveExpression()) return true
+    if(!additiveExpression()) return false
 
     if(relop()){
         if(additiveExpression()){
-            while(additiveExpression()){
-                //Geração de código aqui
+            while(relop()){
+                return false
             }
-            return true
         }
+        return true
     }
 
-    return false
+    return true
 }
 
 fun additiveExpression(): Boolean {

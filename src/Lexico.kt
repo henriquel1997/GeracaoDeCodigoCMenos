@@ -23,6 +23,8 @@ fun analiseLexica(string: String) : MutableList<Token>? {
             ']' -> lista.add(Token(Tipo.COLDIR, char.toString(), linha, i))
             '(' -> lista.add(Token(Tipo.PARESQ, char.toString(), linha, i))
             ')' -> lista.add(Token(Tipo.PARDIR, char.toString(), linha, i))
+            '{' -> lista.add(Token(Tipo.CHAVEESQ, char.toString(), linha, i))
+            '}' -> lista.add(Token(Tipo.CHAVEDIR, char.toString(), linha, i))
             ',' -> lista.add(Token(Tipo.VIRGULA, char.toString(), linha, i))
             ';' -> lista.add(Token(Tipo.PONTOEVIRGULA, char.toString(), linha, i))
             '=' -> {
