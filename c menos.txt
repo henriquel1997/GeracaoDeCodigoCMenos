@@ -1,0 +1,60 @@
+Gramática - C Menos
+
+Alfabeto = ID, NUM, [, ], int, void, (, ), vírgula , if, else, while, return, read, write, var, =, <=, <, >, >=, ==, !=, +, -, *, /
+
+Um char: [,], (, ), vírgula, =, <, >, +, -, *, /
+Dois char: if, <=, >=, ==, !=
+Três char: int, var
+Quatro char: void, else, read
+Cinco char: while, write
+Seis char: return
+Vários char: ID, NUM
+
+P = { 
+	<program> ::= <declaration-list>
+	<declaration-list> ::= <declaration> <declaration-list-linha>
+	<declaration-list-linha> ::= <declaration> <declaration-list-linha> | vazio
+    <declaration> ::= <var-declaration> | <fun-declaration>
+    <var-declaration> ::= <type-specifier> <ID> [NUM] | <type-specifier> <ID> [] 	
+    <type-specifier> ::= int | void
+    <fun-declaration> ::= <type-specifier> <ID> ( <params> ) <compound-stmt>
+    <params> ::= void | <param-list>
+	<param-list> ::= <param> <param-list-linha>
+	<param-list-linha> ::= , <param> <param-list-linha> | vazio
+    <param> ::= <type-specifier> <ID> []
+	<compound-stmt> ::= <local-declarations> <statement-list> <compound-stmt-linha> 
+	<compound-stmt-linha> ::= <local-declarations> <statement-list> <compound-stmt-linha> | vazio
+    <local-declarations> ::= <var-declaration> <local-declaration-linha>
+	<local-declaration-linha> ::= <var-declaration> <local-declaration-linha> | vazio
+    <statement-list> ::= <statement><statement-list-linha>
+	<statement-list-linha> ::= <statement><statement-list-linha> | vazio
+    <statement> :: = <expression-stmt> | <compound-stmt> | <selection-stmt> | <iteration-stmt> | <assignment-stmt> | <return-stmt> | <read-stmt> | <write-stmt>
+    <expression-stmt> ::= <expression> ; | ;
+    <selection-stmt> ::= if ( <expression>) <statement> | if (<expression>) <statement> else <statement>   
+    <iteration-stmt> ::= while ( <expression> ) <statement> 
+    <return-stmt> ::= return <expression> ;
+    <read-stmt> ::= read <variable> ;
+    <write-stmt> ::= write <expression>;
+    <expression> ::= <var-rep> <simple-expression>
+    <var-rep> ::= var = <var-rep-linha>
+	<var-rep-linha> ::= var = <var-rep-linha> | vazio
+    <var> ::= <ID> [<expression>]
+	<simple-expression> ::= <additive-expression> <simple-expression-linha>
+	<simple-expression-linha> ::= <relop> <additive-expression> <simple-expression-linha> | vazio
+    <relop> ::= <= | < | > | >= | == | !=  
+	<additive-expression> ::= <term> <additive-expression-linha>
+	<additive-expression-linha> ::= <addop> <term> <additive-expression-linha> | vazio
+    <addop> ::=  + | -  
+	<term> ::=  <factor> <term-linha>
+	<term-linha> ::= <multop> <factor> <term-linha> | vazio
+    <multop> ::=  * | /  
+    <factor> ::= ( <expression> ) | <num> | <var> | <call>    
+    <call> ::=  <ID> ( <args> )  
+    <args> ::= <arg-list> | vazio
+	<arg-list> ::= <expression><arg-list-linha> 
+	<arg-list-linha> ::= , <expression> <arg-list-linha> | vazio
+    <ID> := <ID> <letter> | <ID> <digit> | <letter>  
+    <num> :: = <num> <digit> | <digit>
+    <letter> ::= a | b | … | z | A | B | … | Z  
+    <digit> ::= 0 | 1 | … | 9 }
+}
