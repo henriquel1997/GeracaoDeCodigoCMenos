@@ -1,0 +1,49 @@
+Gramática - C Menos
+
+Alfabeto = ID, NUM, [, ], int, void, (, ), vírgula , if, else, while, return, read, write, =, <=, <, >, >=, ==, !=, +, -, *, /, {, }
+
+Um char: [,], (, ), vírgula, =, <, >, +, -, *, /, {, }
+Dois char: if, <=, >=, ==, !=
+Três char: int
+Quatro char: void, else, read
+Cinco char: while, write
+Seis char: return
+Vários char: ID, NUM
+
+P = { 
+	<program> ::= <declaration-list>
+	<declaration-list> ::= <declaration> <declaration-list> | <declaration>
+    <declaration> ::= <var-declaration> | <fun-declaration>
+    <var-declaration> ::= <type-specifier> <ID> ; | <type-specifier> <ID> [NUM] ;
+    <type-specifier> ::= int | void
+    <fun-declaration> ::= <type-specifier> <ID> ( <params> ) <compound-stmt>
+    <params> ::= void | <param-list>
+	<param-list> ::= <param> , <param-list> | <param>
+    <param> ::= <type-specifier> <ID> | <type-specifier> <ID> []
+	<compound-stmt> ::= { <local-declarations> <statement-list> }
+    <local-declarations> ::= <var-declaration> <local-declarations> | <var-declaration>
+    <statement-list> ::= <statement><statement-list> | <statement>
+    <statement> :: = <expression-stmt> | <compound-stmt> | <selection-stmt> | <iteration-stmt> |  <return-stmt> | <read-stmt> | <write-stmt>
+    <expression-stmt> ::= <expression> ; | ;
+    <selection-stmt> ::= if ( <expression> ) <statement> | if (<expression>) <statement> else <statement>
+    <iteration-stmt> ::= while ( <expression> ) <statement> 
+    <return-stmt> ::= return ; | return <expression> ;
+    <read-stmt> ::= read <variable> ;
+    <write-stmt> ::= write <expression>;
+    <expression> ::= <variable> = <expression> | <simple-expression>
+    <variable> ::= <ID> |<ID> [<expression>]
+	* <simple-expression> ::= <additive-expression> |  <additive-expression> <relop> <simple-expression>
+    <relop> ::= <= | < | > | >= | == | !=  
+	* <additive-expression> ::= <term> <addop> <additive-expression> | <term>
+    <addop> ::=  + | -  
+	* <term> ::=  <factor> | <factor> <multop> <term>
+    <multop> ::=  * | /  
+    <factor> ::= ( <expression> ) | <num> | <variable> | <call>
+    <call> ::=  <ID> ( <args> )  
+    <args> ::= <arg-list> | vazio
+	<arg-list> ::= <expression> , <arg-list> | <expression>
+    <ID> := <ID> <letter> | <ID> <digit> | <letter>  
+    <num> :: = <num> <digit> | <digit>
+    <letter> ::= a | b | … | z | A | B | … | Z  
+    <digit> ::= 0 | 1 | … | 9 }
+}
