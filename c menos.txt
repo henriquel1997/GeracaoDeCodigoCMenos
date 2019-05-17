@@ -1,10 +1,10 @@
 Gramática - C Menos
 
-Alfabeto = ID, NUM, [, ], int, void, (, ), vírgula , if, else, while, return, read, write, var, =, <=, <, >, >=, ==, !=, +, -, *, /
+Alfabeto = ID, NUM, [, ], int, void, (, ), vírgula , if, else, while, return, read, write, =, <=, <, >, >=, ==, !=, +, -, *, /
 
 Um char: [,], (, ), vírgula, =, <, >, +, -, *, /
 Dois char: if, <=, >=, ==, !=
-Três char: int, var
+Três char: int
 Quatro char: void, else, read
 Cinco char: while, write
 Seis char: return
@@ -18,7 +18,7 @@ P = {
     <type-specifier> ::= int | void
     <fun-declaration> ::= <type-specifier> <ID> ( <params> ) <compound-stmt>
     <params> ::= void | <param-list>
-	<param-list> ::= <param> <param-list> | <param>
+	<param-list> ::= <param> , <param-list> | <param>
     <param> ::= <type-specifier> <ID> []
 	<compound-stmt> ::= <local-declarations> <statement-list> <compound-stmt> |  <local-declarations> <statement-list>
     <local-declarations> ::= <var-declaration> <local-declarations> | <var-declaration>
@@ -39,13 +39,12 @@ P = {
 	<additive-expression-linha> ::= <addop> <term> <additive-expression-linha> | <addop> <term>
     <addop> ::=  + | -  
 	<term> ::=  <factor> <term-linha>
-	<term-linha> ::= <multop> <factor> <term-linha> | vazio
+	<term-linha> ::= <multop> <factor> <term-linha> | <multop> <factor>
     <multop> ::=  * | /  
-    <factor> ::= ( <expression> ) | <num> | <var> | <call>    
+    <factor> ::= ( <expression> ) | <num> | <variable> | <call>
     <call> ::=  <ID> ( <args> )  
     <args> ::= <arg-list> | vazio
-	<arg-list> ::= <expression><arg-list-linha> 
-	<arg-list-linha> ::= , <expression> <arg-list-linha> | vazio
+	<arg-list> ::= <expression> , <arg-list> | <expression>
     <ID> := <ID> <letter> | <ID> <digit> | <letter>  
     <num> :: = <num> <digit> | <digit>
     <letter> ::= a | b | … | z | A | B | … | Z  

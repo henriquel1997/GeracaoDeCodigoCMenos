@@ -8,10 +8,6 @@ fun analiseLexica(string: String) : MutableList<Token>? {
 
         val char = string[i]
 
-        if(i == 39){
-            print("")
-        }
-
         if(char.isWhitespace()){
 
             if(char == '\n'){
@@ -82,7 +78,6 @@ fun identificarTokenString(string: String, pos: Int, linha: Int): Token? {
         stringEncaixa(string, pos, "if") -> Token(Tipo.IF, "if", linha, pos)
         stringEncaixa(string, pos, "!=") -> Token(Tipo.DIFERENTE, "!=", linha, pos)
         stringEncaixa(string, pos, "int") -> Token(Tipo.INTEIRO, "int", linha, pos)
-        stringEncaixa(string, pos, "var") -> Token(Tipo.VAR, "var", linha, pos)
         stringEncaixa(string, pos, "void") -> Token(Tipo.VOID, "void", linha, pos)
         stringEncaixa(string, pos, "else") -> Token(Tipo.ELSE, "else", linha, pos)
         stringEncaixa(string, pos, "read") -> Token(Tipo.READ, "read", linha, pos)

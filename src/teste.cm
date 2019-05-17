@@ -2,7 +2,7 @@ int x;
 int y;
 int k;
 
-int abc (int qwe,int lol)
+int abc (int qwe, int lol)
 	int aa;
 	int bb;
 	int cc;

@@ -17,6 +17,7 @@ fun declaration(): Boolean {
     return false
 }
 
+//TODO: Não dá pra criar variável sem ser array?
 fun varDeclaration(): Boolean {
     val cursorInicio = cursor
 
@@ -90,10 +91,20 @@ fun params(): Boolean {
 }
 
 fun paramList(): Boolean {
+    val cursorInicio = cursor
     if(!param()) return false
-    while(param()){
-        //Geração de código aqui
+    if(tokens[cursor++].tipo != Tipo.VIRGULA){
+        cursor--
+        return false
     }
+
+    while(param()){
+        if(tokens[cursor++].tipo != Tipo.VIRGULA){
+            cursor = cursorInicio
+            return false
+        }
+    }
+
     return true
 }
 
@@ -350,5 +361,94 @@ fun relop(): Boolean {
 
 //TODO: Falta implementar
 fun term(): Boolean {
+    if(factor()){
+        if(termLinha()){
+            return true
+        }
+    }
+
     return false
+}
+
+fun termLinha(): Boolean {
+    if(!multop()) return false
+    if(!factor()) return false
+    while (multop()){
+        if(!factor()) return false
+    }
+    return true
+}
+
+fun multop(): Boolean {
+    if(tokens[cursor].tipo == Tipo.MULTIPLICAO || tokens[cursor].tipo == Tipo.DIVISAO){
+        cursor++
+        return true
+    }
+    return false
+}
+
+fun factor(): Boolean {
+
+    if(tokens[cursor].tipo == Tipo.NUMERO){
+        cursor++
+        return true
+    }
+
+    if(variable()) return true
+    if(call()) return true
+
+    val cursorInicio = cursor
+    if(tokens[cursor].tipo == Tipo.PARESQ){
+        cursor++
+        if(expression()){
+            if(tokens[cursor].tipo == Tipo.PARDIR){
+                cursor++
+                return true
+            }
+        }
+
+    }
+    cursor = cursorInicio
+    return false
+}
+
+fun call(): Boolean {
+    val cursorInicio = cursor
+
+    if(tokens[cursor++].tipo == Tipo.IDENTIFICADOR){
+        if(tokens[cursor++].tipo == Tipo.PARESQ){
+            if(args()){
+                if(tokens[cursor++].tipo == Tipo.PARDIR){
+                    return true
+                }
+            }
+        }
+    }
+
+    cursor = cursorInicio
+    return false
+}
+
+fun args(): Boolean {
+    argslist()
+    return true
+}
+
+fun argslist(): Boolean {
+    val cursorInicio = cursor
+
+    if(!expression()) return false
+    if(tokens[cursor++].tipo != Tipo.VIRGULA){
+        cursor--
+        return false
+    }
+
+    while(expression()){
+        if(tokens[cursor++].tipo != Tipo.VIRGULA){
+            cursor = cursorInicio
+            return false
+        }
+    }
+
+    return true
 }
