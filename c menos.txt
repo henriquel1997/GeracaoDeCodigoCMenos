@@ -14,32 +14,30 @@ P = {
 	<program> ::= <declaration-list>
 	<declaration-list> ::= <declaration> <declaration-list> | <declaration>
     <declaration> ::= <var-declaration> | <fun-declaration>
-    <var-declaration> ::= <type-specifier> <ID> [NUM] | <type-specifier> <ID> [] 	
+    * <var-declaration> ::= <type-specifier> <ID> ; | <type-specifier> <ID> [NUM] ;
     <type-specifier> ::= int | void
     <fun-declaration> ::= <type-specifier> <ID> ( <params> ) <compound-stmt>
     <params> ::= void | <param-list>
 	<param-list> ::= <param> , <param-list> | <param>
-    <param> ::= <type-specifier> <ID> []
-	<compound-stmt> ::= <local-declarations> <statement-list> <compound-stmt> |  <local-declarations> <statement-list>
+    * <param> ::= <type-specifier> <ID> | <type-specifier> <ID> []
+	* <compound-stmt> ::= { <local-declarations> <statement-list> }
     <local-declarations> ::= <var-declaration> <local-declarations> | <var-declaration>
     <statement-list> ::= <statement><statement-list> | <statement>
-    <statement> :: = <expression-stmt> | <compound-stmt> | <selection-stmt> | <iteration-stmt> | <assignment-stmt> | <return-stmt> | <read-stmt> | <write-stmt>
+    * <statement> :: = <expression-stmt> | <compound-stmt> | <selection-stmt> | <iteration-stmt> |  <return-stmt> | <read-stmt> | <write-stmt>
     <expression-stmt> ::= <expression> ; | ;
     <selection-stmt> ::= if ( <expression> ) <statement> | if (<expression>) <statement> else <statement>
     <iteration-stmt> ::= while ( <expression> ) <statement> 
-    <return-stmt> ::= return <expression> ;
+    * <return-stmt> ::= return ; | return <expression> ;
     <read-stmt> ::= read <variable> ;
     <write-stmt> ::= write <expression>;
-    <expression> ::= <var-rep> <simple-expression>
-    <var-rep> ::= <variable> = <var-rep> | vazio
-    <variable> ::= <ID> [<expression>]
-	<simple-expression> ::= <additive-expression> | <relop> <additive-expression> <simple-expression>
+    * <expression> ::= <variable> = <expression> | <simple-expression>
+    * removido -> <var-rep> ::= <variable> = <var-rep> | vazio
+    * <variable> ::= <ID> |<ID> [<expression>]
+	* <simple-expression> ::= <additive-expression> |  <additive-expression> <relop> <simple-expression>
     <relop> ::= <= | < | > | >= | == | !=  
-	<additive-expression> ::= <term> <additive-expression-linha> | <term>
-	<additive-expression-linha> ::= <addop> <term> <additive-expression-linha> | <addop> <term>
+	* <additive-expression> ::= <term> <addop> <additive-expression> | <term>
     <addop> ::=  + | -  
-	<term> ::=  <factor> <term-linha>
-	<term-linha> ::= <multop> <factor> <term-linha> | <multop> <factor>
+	* <term> ::=  <factor> | <factor> <multop> <term>
     <multop> ::=  * | /  
     <factor> ::= ( <expression> ) | <num> | <variable> | <call>
     <call> ::=  <ID> ( <args> )  
