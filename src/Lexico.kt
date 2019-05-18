@@ -54,7 +54,21 @@ fun analiseLexica(string: String) : MutableList<Token>? {
             '+' -> lista.add(Token(Tipo.SOMA, char.toString(), linha, i))
             '-' -> lista.add(Token(Tipo.SUBTRACAO, char.toString(), linha, i))
             '*' -> lista.add(Token(Tipo.MULTIPLICAO, char.toString(), linha, i))
-            '/' -> lista.add(Token(Tipo.DIVISAO, char.toString(), linha, i))
+            '/' -> {
+
+                if(string[i+1] != '*'){
+                    lista.add(Token(Tipo.DIVISAO, char.toString(), linha, i))
+                }else{
+                    while(string[i] != '*' || string[i+1] != '/'){
+                        if(i < string.length - 1){
+                            i++
+                        }else{
+                            return lista
+                        }
+                    }
+                    i += 2
+                }
+            }
 
             else -> {
                 val token =  identificarTokenString(string, i, linha)

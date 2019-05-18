@@ -18,11 +18,11 @@ fun main(){
         tokens = it
     }
 
-    tokens.forEach {
-        println("Tipo: ${it.tipo}, Valor: ${it.valor}")
-    }
-
-    println()
+//    tokens.forEach {
+//        println("Tipo: ${it.tipo}, Valor: ${it.valor}")
+//    }
+//
+//    println()
     println("Resultado sintático: ${program()}")
 
 }
