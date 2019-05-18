@@ -20,7 +20,7 @@ P = {
     <params> ::= void | <param-list>
 	<param-list> ::= <param> , <param-list> | <param>
     <param> ::= <type-specifier> <ID> | <type-specifier> <ID> []
-	<compound-stmt> ::= { <local-declarations> <statement-list> }
+	<compound-stmt> ::= { <local-declarations> <statement-list> } | { <local-declarations> } | { <statement-list> } | { }
     <local-declarations> ::= <var-declaration> <local-declarations> | <var-declaration>
     <statement-list> ::= <statement><statement-list> | <statement>
     <statement> :: = <expression-stmt> | <compound-stmt> | <selection-stmt> | <iteration-stmt> |  <return-stmt> | <read-stmt> | <write-stmt>
@@ -29,7 +29,7 @@ P = {
     <iteration-stmt> ::= while ( <expression> ) <statement> 
     <return-stmt> ::= return ; | return <expression> ;
     <read-stmt> ::= read <variable> ;
-    <write-stmt> ::= write <expression>;
+    <write-stmt> ::= write <simple-expression>;
     <expression> ::= <variable> = <expression> | <simple-expression>
     <variable> ::= <ID> |<ID> [<expression>]
 	<simple-expression> ::= <additive-expression> |  <additive-expression> <relop> <simple-expression>

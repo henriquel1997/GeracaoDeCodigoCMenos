@@ -8,16 +8,10 @@ int abc (int qwe, int lol){
 	int ee[123];
 	int qre;
 
-	cc = 2;
+	cc = abc(32, efg(43, 8));
     qre = 3;
 
-    if( aa == bb )
-    	while (aa <= cc)
-    		aa = 5;
-    else
-    	return 1;
-
-	ee[1] = aa + aa;
+	ee[1] = aa + cc;
 	ee[2] = bb - bb;
 	ee[3] = cc * cc;
 	ee[4] = dd / dd;
@@ -27,10 +21,12 @@ int abc (int qwe, int lol){
 	ee[8] = dd >= cc;
 
 	read u;
+	write aa == 78;
 
 	return aa;
 }
 
 int main(void){
+    int w;
 	return 1;
 }

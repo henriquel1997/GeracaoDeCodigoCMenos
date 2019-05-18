@@ -1,7 +1,7 @@
 var cursor = 0
 
 fun program(): Boolean {
-    return declarationList()
+    return declarationList() && cursor == tokens.size
 }
 
 fun declarationList(): Boolean {
@@ -13,7 +13,10 @@ fun declarationList(): Boolean {
 }
 
 fun declaration(): Boolean {
-    if(varDeclaration() || funDeclaration()) return true
+    try {
+        if(varDeclaration() || funDeclaration()) return true
+    }catch (e: IndexOutOfBoundsException){}
+
     return false
 }
 
@@ -144,14 +147,20 @@ fun compoundStmt(): Boolean {
     val cursorInicio = cursor
 
     if(tokens[cursor++].tipo == Tipo.CHAVEESQ){
-        if(localDeclarations()){
-            if(statementList()){
-                if(tokens[cursor++].tipo == Tipo.CHAVEDIR){
-                    return true
-                }
-            }
+
+        val cursorInicioLocal = cursor
+        if(!localDeclarations()){
+            cursor = cursorInicioLocal
         }
 
+        val cursorInicioList = cursor
+        if(!statementList()){
+            cursor = cursorInicioList
+        }
+
+        if(tokens[cursor++].tipo == Tipo.CHAVEDIR){
+            return true
+        }
     }
 
     cursor = cursorInicio
@@ -275,7 +284,7 @@ fun writeStmt(): Boolean {
     val cursorInicio = cursor
 
     if(tokens[cursor++].tipo == Tipo.WRITE){
-        if(variable()){
+        if(simpleExpression()){
             if(tokens[cursor++].tipo == Tipo.PONTOEVIRGULA){
                 return true
             }
@@ -404,8 +413,8 @@ fun factor(): Boolean {
         return true
     }
 
-    if(variable()) return true
     if(call()) return true
+    if(variable()) return true
 
     val cursorInicio = cursor
     if(tokens[cursor].tipo == Tipo.PARESQ){
@@ -448,13 +457,10 @@ fun argslist(): Boolean {
     val cursorInicio = cursor
 
     if(!expression()) return false
-    if(tokens[cursor++].tipo != Tipo.VIRGULA){
-        cursor--
-        return false
-    }
 
-    while(expression()){
-        if(tokens[cursor++].tipo != Tipo.VIRGULA){
+    while(tokens[cursor].tipo == Tipo.VIRGULA){
+        cursor++
+        if(!expression()){
             cursor = cursorInicio
             return false
         }
