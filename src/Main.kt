@@ -11,8 +11,7 @@ var programa = ""
 var tokens = mutableListOf<Token>()
 
 fun main(){
-    val localArquivo = "/Users/henriquedelima/IdeaProjects/GeracaoDeCodigoCMenos/src/teste.cm"
-    //val localArquivo = "C:\\Users\\Henrique\\IdeaProjects\\GeracaoDeCodigoCMenos\\src\\teste.cm"
+    val localArquivo = "C:\\Users\\Henrique\\IdeaProjects\\GeraçãoDeCódigoCMenos\\src\\teste.cm"
 
     programa = File(localArquivo).readText()
     analiseLexica(programa)?.let {
@@ -23,7 +22,7 @@ fun main(){
         println("Tipo: ${it.tipo}, Valor: ${it.valor}")
     }
 
-//    println()
-//    println("Resultado sintático: ${program()}")
+    println()
+    println("Resultado sintático: ${program()}")
 
 }

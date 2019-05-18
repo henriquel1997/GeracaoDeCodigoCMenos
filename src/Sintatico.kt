@@ -333,38 +333,28 @@ fun variable(): Boolean {
     return false
 }
 
-//TODO: Está errado, consertar
 fun simpleExpression(): Boolean {
     if(!additiveExpression()) return false
 
-    if(relop()){
-        if(additiveExpression()){
-            while(relop()){
-                return false
-            }
+    while(relop()){
+        if(!additiveExpression()){
+            return false
         }
-        return true
     }
 
     return true
 }
 
 fun additiveExpression(): Boolean {
-    if(term()){
-        additiveExpressionLinha()
-        return true
-    }
-    return false
-}
+    if(!term()) return false
 
-fun additiveExpressionLinha(): Boolean {
-    if(addop() && term()){
-        while (addop()){
-            if(!term()) return false
+    while(addop()){
+        if(!term()){
+            return false
         }
-        return true
     }
-    return false
+
+    return true
 }
 
 fun addop(): Boolean{
@@ -388,23 +378,15 @@ fun relop(): Boolean {
     return false
 }
 
-//TODO: Falta implementar
 fun term(): Boolean {
-    if(factor()){
-        if(termLinha()){
-            return true
+    if(!factor()) return false
+
+    while(multop()){
+        if(!factor()){
+            return false
         }
     }
 
-    return false
-}
-
-fun termLinha(): Boolean {
-    if(!multop()) return false
-    if(!factor()) return false
-    while (multop()){
-        if(!factor()) return false
-    }
     return true
 }
 

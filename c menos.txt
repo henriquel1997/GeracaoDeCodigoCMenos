@@ -32,11 +32,11 @@ P = {
     <write-stmt> ::= write <expression>;
     <expression> ::= <variable> = <expression> | <simple-expression>
     <variable> ::= <ID> |<ID> [<expression>]
-	* <simple-expression> ::= <additive-expression> |  <additive-expression> <relop> <simple-expression>
+	<simple-expression> ::= <additive-expression> |  <additive-expression> <relop> <simple-expression>
     <relop> ::= <= | < | > | >= | == | !=  
-	* <additive-expression> ::= <term> <addop> <additive-expression> | <term>
+	<additive-expression> ::= <term> <addop> <additive-expression> | <term>
     <addop> ::=  + | -  
-	* <term> ::=  <factor> | <factor> <multop> <term>
+	<term> ::=  <factor> | <factor> <multop> <term>
     <multop> ::=  * | /  
     <factor> ::= ( <expression> ) | <num> | <variable> | <call>
     <call> ::=  <ID> ( <args> )  

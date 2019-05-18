@@ -3,7 +3,7 @@ int y;
 int k;
 
 int abc (int qwe, int lol){
-	int aa;
+	int aa return;
 	int bb;
 	int cc;
 	int dd;
