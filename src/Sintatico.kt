@@ -103,13 +103,10 @@ fun params(): Boolean {
 fun paramList(): Boolean {
     val cursorInicio = cursor
     if(!param()) return false
-    if(tokens[cursor++].tipo != Tipo.VIRGULA){
-        cursor--
-        return false
-    }
 
-    while(param()){
-        if(tokens[cursor++].tipo != Tipo.VIRGULA){
+    while(tokens[cursor].tipo == Tipo.VIRGULA){
+        cursor++
+        if(!param()){
             cursor = cursorInicio
             return false
         }
@@ -290,8 +287,7 @@ fun writeStmt(): Boolean {
 }
 
 fun expression(): Boolean {
-
-    if(simpleExpression()) return true
+    val cursorInicio = cursor
 
     if(variable()){
         if(tokens[cursor].tipo == Tipo.RECEBE){
@@ -299,9 +295,12 @@ fun expression(): Boolean {
             if (expression()){
                 return true
             }
-            cursor--
         }
+        cursor = cursorInicio
     }
+
+    if(simpleExpression()) return true
+
 
     return false
 }

@@ -1,9 +1,6 @@
-int x;
-int y;
-int k;
 
 int abc (int qwe, int lol){
-	int aa return;
+	int aa;
 	int bb;
 	int cc;
 	int dd;
@@ -11,14 +8,14 @@ int abc (int qwe, int lol){
 	int ee[123];
 	int qre;
 
-	cc = -2;
-	qre = 3;
+	cc = 2;
+    qre = 3;
 
-	if( aa == bb )
-		while (aa <= cc)
-			aa = 5;
-	else
-		return 1;
+    if( aa == bb )
+    	while (aa <= cc)
+    		aa = 5;
+    else
+    	return 1;
 
 	ee[1] = aa + aa;
 	ee[2] = bb - bb;
@@ -28,6 +25,8 @@ int abc (int qwe, int lol){
 	ee[6] = bb > cc;
 	ee[7] = cc <= dd;
 	ee[8] = dd >= cc;
+
+	read u;
 
 	return aa;
 }
