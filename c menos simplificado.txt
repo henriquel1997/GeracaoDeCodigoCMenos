@@ -7,14 +7,14 @@ P = {
 	<declaration-list> ::= <declaration> <declaration-list> | <declaration>
     * <declaration> ::= <var-declaration> | <statement>
     * <var-declaration> ::= int <ID> ;
-    <statement> :: = <expression-stmt> | <selection-stmt> | <iteration-stmt> |  <return-stmt> | <read-stmt> | <write-stmt>
-    <expression-stmt> ::= <variable> = <simple-expression>  ; | ;
+    * <statement> :: = <expression-stmt> | <selection-stmt> | <iteration-stmt> |  <return-stmt> | <read-stmt> | <write-stmt>
+    * <expression-stmt> ::= <variable> = <simple-expression>  ; | ;
     * <selection-stmt> ::= if ( <simple-expression> ) { <statement-list> } | if (<simple-expression>) { <statement-list> } else { <statement-list> }
     * <iteration-stmt> ::= while ( <simple-expression> ) { <statement> }
     <statement-list> ::= <statement> <statement-list> | <statement>
-    <return-stmt> ::= return ; | return <simple-expression> ;
+    * <return-stmt> ::= return ; | return <simple-expression> ;
     <read-stmt> ::= read <variable> ;
-    <write-stmt> ::= write <simple-expression>;
+    * <write-stmt> ::= write <simple-expression> ;
     * <variable> ::= <ID>
 	<simple-expression> ::= <additive-expression> |  <additive-expression> <relop> <simple-expression>
     <relop> ::= <= | < | > | >= | == | !=  
