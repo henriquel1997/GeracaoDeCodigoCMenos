@@ -1,0 +1,6 @@
+int x1 = 0;
+
+while(x1 < 100){
+    write x1;
+    x1 = x1 + 1;
+}

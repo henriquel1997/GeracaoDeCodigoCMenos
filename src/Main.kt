@@ -7,13 +7,24 @@ enum class Tipo{
 
 class Token (val tipo: Tipo, val valor: String, val linha:Int, val coluna:Int)
 
+var nomePrograma = "programa"
 var programa = ""
+val tamanhoMemoriaPrograma = 1000
 var tokens = mutableListOf<Token>()
 
 fun main(){
-    val localArquivo = "C:\\Users\\Henrique\\IdeaProjects\\GeraçãoDeCódigoCMenos\\src\\teste.cm"
+    val localArquivo = "C:\\Users\\Henrique\\IdeaProjects\\GeraçãoDeCódigoCMenos\\teste.cm"
 
-    programa = File(localArquivo).readText()
+    val arquivo = File(localArquivo)
+    nomePrograma = arquivo.name
+
+    val posPonto = nomePrograma.indexOfFirst { it == '.' }
+    if(posPonto > 0){
+        nomePrograma = nomePrograma.substring(0, posPonto)
+    }
+
+    programa = arquivo.readText()
+
     analiseLexica(programa)?.let {
         tokens = it
     }
@@ -22,7 +33,7 @@ fun main(){
         println("Tipo: ${it.tipo}, Valor: ${it.valor}")
     }
 
-    println()
-    println("Resultado sintático: ${program()}")
-
+    if(program()){
+        gerarPrograma()
+    }
 }

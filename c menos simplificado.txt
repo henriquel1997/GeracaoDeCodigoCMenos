@@ -6,9 +6,9 @@ P = {
 	<program> ::= <declaration-list>
 	<declaration-list> ::= <declaration> <declaration-list> | <declaration>
     <declaration> ::= <var-declaration> | <statement>
-    <var-declaration> ::= int <ID> ;
+    <var-declaration> ::= int <ID> ; | int <ID> = <num> ;
     <statement> :: = <expression-stmt> | <selection-stmt> | <iteration-stmt> |  <return-stmt> | <read-stmt> | <write-stmt>
-    <expression-stmt> ::= <variable> = <simple-expression>  ; | ;
+    <expression-stmt> ::= <variable> = <simple-expression>  ;
     <selection-stmt> ::= if ( <simple-expression> ) { <statement-list> } | if (<simple-expression>) { <statement-list> } else { <statement-list> }
     <iteration-stmt> ::= while ( <simple-expression> ) { <statement-list> }
     <statement-list> ::= <statement> <statement-list> | <statement>

@@ -27,8 +27,24 @@ fun varDeclaration(): Boolean {
     val cursorInicio = cursor
 
     if(tokens[cursor++].tipo == Tipo.INTEIRO){
-        if(tokens[cursor++].tipo == Tipo.IDENTIFICADOR){
+        if(tokens[cursor].tipo == Tipo.IDENTIFICADOR){
+            val nome = tokens[cursor].valor
+            cursor++
+
+            var numero = "0"
+            if(tokens[cursor].tipo == Tipo.RECEBE){
+                cursor++
+                if(tokens[cursor].tipo == Tipo.NUMERO){
+                    numero = tokens[cursor].valor
+                    cursor++
+                }else{
+                    cursor = cursorInicio
+                    return false
+                }
+            }
+
             if(tokens[cursor++].tipo == Tipo.PONTOEVIRGULA){
+                criarVariavel(nome, numero)
                 return true
             }
         }
@@ -60,18 +76,12 @@ fun expressionStmt(): Boolean {
 
     if(variable()){
         if(tokens[cursor++].tipo == Tipo.RECEBE){
-            if(!simpleExpression()){
-                cursor = cursorInicio
+            if(simpleExpression()){
+                if(tokens[cursor++].tipo == Tipo.PONTOEVIRGULA){
+                    return true
+                }
             }
-        }else{
-            cursor = cursorInicio
         }
-    }else{
-        cursor = cursorInicio
-    }
-
-    if(tokens[cursor++].tipo == Tipo.PONTOEVIRGULA){
-        return true
     }
     cursor = cursorInicio
     return false
