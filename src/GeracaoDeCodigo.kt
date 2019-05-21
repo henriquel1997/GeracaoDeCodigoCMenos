@@ -31,49 +31,70 @@ fun gerarCodigoRecebe(nomeVariavel: String): List<Byte> {
 }
 
 fun gerarCodigoExpressao(ladoEsquerdo: List<Byte>, operador: Tipo, ladoDireito: List<Byte>): List<Byte> {
-    val codigo = mutableListOf<Byte>()
+    val codigoExpressao = mutableListOf<Byte>()
 
-    codigo += ladoEsquerdo
+    if(ladoEsquerdo.isNotEmpty() && ladoDireito.isNotEmpty()){
+        codigoExpressao += ladoEsquerdo
 
-    if(operador == Tipo.SOMA || operador == Tipo.SUBTRACAO || operador == Tipo.MULTIPLICAO || operador == Tipo.DIVISAO){
-        //STORE
-        codigo.add(65, false)
-        //TODO: Definir como ele vai saber a posição que ele deve salvar o resultado da primeira operação
-        val pos = 0
-        codigo.add(pos, true)
+        if(operador == Tipo.SOMA || operador == Tipo.SUBTRACAO || operador == Tipo.MULTIPLICAO || operador == Tipo.DIVISAO){
+            //STORE
+            codigoExpressao.add(65, false)
+            val pos = codigo.size + ladoEsquerdo.size + ladoDireito.size + 4
+            codigoExpressao.add(pos, true)
+        }
+
+        codigoExpressao += ladoDireito
+
+        when(operador){
+            Tipo.SOMA -> {
+                codigoExpressao.add(20, false)
+                codigoExpressao.add(0, true)
+            }
+
+            Tipo.SUBTRACAO -> {
+                codigoExpressao.add(21, false)
+                codigoExpressao.add(0, true)
+            }
+
+            Tipo.MULTIPLICAO -> {
+                codigoExpressao.add(22, false)
+                codigoExpressao.add(0, true)
+            }
+
+            Tipo.DIVISAO -> {
+                codigoExpressao.add(23, false)
+                codigoExpressao.add(255, true)
+            }
+
+            Tipo.IGUAL -> {
+                codigoExpressao.add(32, false)
+            }
+
+            Tipo.DIFERENTE -> {
+                codigoExpressao.add(33, false)
+            }
+
+            Tipo.MAIOR -> {
+                codigoExpressao.add(34, false)
+            }
+
+            Tipo.MAIORIGUAL -> {
+                codigoExpressao.add(35, false)
+            }
+
+            Tipo.MENOR -> {
+                codigoExpressao.add(36, false)
+            }
+
+            Tipo.MENORIGUAL -> {
+                codigoExpressao.add(37, false)
+            }
+
+            else -> return listOf()
+        }
     }
 
-    codigo += ladoDireito
-
-    when(operador){
-        Tipo.SOMA -> {
-            codigo.add(20, false)
-            codigo.add(0, true)
-        }
-
-        Tipo.SUBTRACAO -> {
-            codigo.add(21, false)
-            codigo.add(0, true)
-        }
-
-        Tipo.MULTIPLICAO -> {
-            codigo.add(22, false)
-            codigo.add(0, true)
-        }
-
-        Tipo.DIVISAO -> {
-            codigo.add(23, false)
-            codigo.add(255, true)
-        }
-
-        Tipo.IGUAL -> {
-            codigo.add(22, false)
-        }
-
-        else -> return listOf()
-    }
-
-    return codigo
+    return codigoExpressao
 }
 
 fun gerarCodigoNumero(valor: String): List<Byte> {
@@ -118,28 +139,46 @@ fun gerarCodigoWrite(expressao: List<Byte>): List<Byte> {
     return codigo
 }
 
-fun gerarPrograma(){
+fun gerarCodigoWhile(expressao: List<Byte>, codigoEscopo: List<Byte>): List<Byte> {
 
-    val codigoVariaveis = mutableListOf<Byte>()
+    if(expressao.isEmpty() || codigoEscopo.isEmpty()) return emptyList()
 
+    val codigoWhile = expressao.toMutableList()
+
+    codigoWhile.add(92, false)
+    codigoWhile.add(codigo.size + expressao.size + codigoEscopo.size + 4, true)
+
+    codigoWhile.addAll(codigoEscopo)
+
+    codigoWhile.add(90, false)
+    codigoWhile.add(codigo.size, true)
+
+    return codigoWhile
+}
+
+fun gerarInicioPrograma(){
     //LSP com a Memória do Programa
-    codigoVariaveis.add(79, false)
-    codigoVariaveis.add(tamanhoMemoriaPrograma, true)
+    codigo.add(79, false)
+    codigo.add(tamanhoMemoriaPrograma, true)
+}
 
+fun gerarEspacoVariaveis(){
     if(variaveis.isNotEmpty()){
         //JUMP para o início do programa
-        codigoVariaveis.add(90, false)
-        codigoVariaveis.add(6 + (variaveis.size * 2), true)
+        codigo.add(90, false)
+        codigo.add(6 + (variaveis.size * 2), true)
 
         variaveis.forEach{ variavel ->
-            codigoVariaveis.add(variavel.value, true)
+            codigo.add(variavel.value, true)
         }
     }
+}
 
+fun finalizarPrograma(){
     //Adicionando STOP ao fim do código
     codigo.add(97, false)
 
-    File("$nomePrograma.OBJ").writeBytes((codigoVariaveis + codigo).toByteArray())
+    File("$nomePrograma.OBJ").writeBytes((codigo).toByteArray())
 }
 
 fun stringToInt(valor: String): Int? {

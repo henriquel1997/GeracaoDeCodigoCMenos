@@ -3,15 +3,14 @@ Gramática - C Menos
 Alfabeto = ID, NUM, [, ], int, (, ), vírgula , if, else, while, read, write, =, <=, <, >, >=, ==, !=, +, -, *, /, {, }
 
 P = { 
-	<program> ::= <declaration-list>
-	<declaration-list> ::= <declaration> <declaration-list> | <declaration>
-    <declaration> ::= <var-declaration> | <statement>
+	<program> ::= <var-declaration-list>  <statement-list> | <statement-list>
+	<var-declaration-list> ::= <var-declaration> <var-declaration-list> | <var-declaration>
     <var-declaration> ::= int <ID> ; | int <ID> = <num> ;
+    <statement-list> ::= <statement> <statement-list> | <statement>
     <statement> :: = <expression-stmt> | <selection-stmt> | <iteration-stmt> |  <return-stmt> | <read-stmt> | <write-stmt>
     <expression-stmt> ::= <variable> = <simple-expression>  ;
     <selection-stmt> ::= if ( <simple-expression> ) { <statement-list> } | if (<simple-expression>) { <statement-list> } else { <statement-list> }
     <iteration-stmt> ::= while ( <simple-expression> ) { <statement-list> }
-    <statement-list> ::= <statement> <statement-list> | <statement>
     <read-stmt> ::= read <variable> ;
     <write-stmt> ::= write <simple-expression> ;
     <variable> ::= <ID>
@@ -21,7 +20,7 @@ P = {
     <addop> ::=  + | -  
 	<term> ::=  <factor> | <factor> <multop> <term>
     <multop> ::=  * | /  
-    * <factor> ::= ( <simple-expression> ) | <num> | <variable>
+    <factor> ::= ( <simple-expression> ) | <num> | <variable>
     <ID> := <ID> <letter> | <ID> <digit> | <letter>  
     <num> :: = <num> <digit> | <digit>
     <letter> ::= a | b | … | z | A | B | … | Z  

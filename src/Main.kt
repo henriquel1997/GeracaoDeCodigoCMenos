@@ -34,6 +34,6 @@ fun main(){
     }
 
     if(program()){
-        gerarPrograma()
+        finalizarPrograma()
     }
 }

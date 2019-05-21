@@ -1,25 +1,28 @@
 var cursor = 0
 
 fun program(): Boolean {
-    return declarationList() && cursor == tokens.size
-}
 
-fun declarationList(): Boolean {
-    if(!declaration()) return false
-    while(declaration()){
-        //Geração de código aqui
-    }
-    return true
-}
-
-fun declaration(): Boolean {
-    val cursorInicio = cursor
     try {
-        if(varDeclaration() || statement()) return true
+        gerarInicioPrograma()
+        if(varDeclarationList()){
+            gerarEspacoVariaveis()
+        }
+
+        val statements = statementList()
+
+        if(statements.isNotEmpty()){
+            codigo += statements
+            return true
+        }
     }catch (e: IndexOutOfBoundsException){}
 
-    cursor = cursorInicio
     return false
+}
+
+fun varDeclarationList() : Boolean {
+    if(!varDeclaration()) return false
+    while(varDeclaration()){}
+    return true
 }
 
 
@@ -54,21 +57,30 @@ fun varDeclaration(): Boolean {
     return false
 }
 
-fun statementList(): Boolean {
-    if(!statement()) return false
-    while(statement()){
-        //Geração de código aqui
+fun statementList(): List<Byte> {
+    val codigo = statement().toMutableList()
+    if(codigo.isEmpty()) return emptyList()
+
+    var statement = statement()
+    while(statement.isNotEmpty()){
+        codigo += statement
+        statement = statement()
     }
-    return true
+
+    return codigo
 }
 
-fun statement(): Boolean {
-    //if(expressionStmt()) return true
-    if(selectionStmt()) return true
-    if(iterationStmt()) return true
-    //if(readStmt()) return true
-    //if(writeStmt()) return true
-    return false
+fun statement(): List<Byte> {
+    val expression = expressionStmt()
+    if(expression.isNotEmpty()) return expression
+    //if(selectionStmt()) return true
+    val iteration = iterationStmt()
+    if(iteration.isNotEmpty()) return iteration
+    val read = readStmt()
+    if(read.isNotEmpty()) return read
+    val write = writeStmt()
+    if(write.isNotEmpty()) return write
+    return emptyList()
 }
 
 fun expressionStmt(): List<Byte> {
@@ -99,17 +111,21 @@ fun selectionStmt(): Boolean {
             if(expressao.isNotEmpty()){
                 if(tokens[cursor++].tipo == Tipo.PARDIR){
                     if(tokens[cursor++].tipo == Tipo.CHAVEESQ){
-                        if(statementList()){
+                        val codigoIf = statementList()
+                        if(codigoIf.isNotEmpty()){
                             if(tokens[cursor++].tipo == Tipo.CHAVEDIR){
                                 if(tokens[cursor++].tipo == Tipo.ELSE){
                                     if(tokens[cursor++].tipo == Tipo.CHAVEESQ) {
-                                        if (statementList()) {
+                                        val codigoElse = statementList()
+                                        if (codigoElse.isNotEmpty()) {
                                             if (tokens[cursor++].tipo == Tipo.CHAVEDIR) {
+                                                //Gerar Código do IF ELSE aqui
                                                 return true
                                             }
                                         }
                                     }
                                 }else{
+                                    //Gerar Código do IF comum aqui
                                     cursor--
                                     return true
                                 }
@@ -125,8 +141,7 @@ fun selectionStmt(): Boolean {
     return false
 }
 
-//TODO: Geração de código do While
-fun iterationStmt(): Boolean {
+fun iterationStmt(): List<Byte> {
     val cursorInicio = cursor
 
     if(tokens[cursor++].tipo == Tipo.WHILE){
@@ -135,9 +150,10 @@ fun iterationStmt(): Boolean {
             if(expressao.isNotEmpty()){
                 if(tokens[cursor++].tipo == Tipo.PARDIR){
                     if(tokens[cursor++].tipo == Tipo.CHAVEESQ){
-                        if(statementList()){
+                        val codigo = statementList()
+                        if(codigo.isNotEmpty()){
                             if(tokens[cursor++].tipo == Tipo.CHAVEDIR){
-                                return true
+                                return gerarCodigoWhile(expressao, codigo)
                             }
                         }
                     }
@@ -147,7 +163,7 @@ fun iterationStmt(): Boolean {
     }
 
     cursor = cursorInicio
-    return false
+    return emptyList()
 }
 
 fun readStmt(): List<Byte> {
