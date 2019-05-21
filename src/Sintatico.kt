@@ -63,36 +63,40 @@ fun statementList(): Boolean {
 }
 
 fun statement(): Boolean {
-    if(expressionStmt()) return true
+    //if(expressionStmt()) return true
     if(selectionStmt()) return true
     if(iterationStmt()) return true
-    if(readStmt()) return true
-    if(writeStmt()) return true
+    //if(readStmt()) return true
+    //if(writeStmt()) return true
     return false
 }
 
-fun expressionStmt(): Boolean {
+fun expressionStmt(): List<Byte> {
     val cursorInicio = cursor
 
-    if(variable()){
+    val nome = variable()
+    if(nome != null){
         if(tokens[cursor++].tipo == Tipo.RECEBE){
-            if(simpleExpression()){
+            val expressao = simpleExpression()
+            if(expressao.isNotEmpty()){
                 if(tokens[cursor++].tipo == Tipo.PONTOEVIRGULA){
-                    return true
+                    return gerarCodigoRecebe(nome)
                 }
             }
         }
     }
     cursor = cursorInicio
-    return false
+    return emptyList()
 }
 
+//TODO: Geração de código do if / else
 fun selectionStmt(): Boolean {
     val cursorInicio = cursor
 
     if(tokens[cursor++].tipo == Tipo.IF){
         if(tokens[cursor++].tipo == Tipo.PARESQ){
-            if(simpleExpression()){
+            val expressao = simpleExpression()
+            if(expressao.isNotEmpty()){
                 if(tokens[cursor++].tipo == Tipo.PARDIR){
                     if(tokens[cursor++].tipo == Tipo.CHAVEESQ){
                         if(statementList()){
@@ -121,12 +125,14 @@ fun selectionStmt(): Boolean {
     return false
 }
 
+//TODO: Geração de código do While
 fun iterationStmt(): Boolean {
     val cursorInicio = cursor
 
     if(tokens[cursor++].tipo == Tipo.WHILE){
         if(tokens[cursor++].tipo == Tipo.PARESQ){
-            if(simpleExpression()){
+            val expressao = simpleExpression()
+            if(expressao.isNotEmpty()){
                 if(tokens[cursor++].tipo == Tipo.PARDIR){
                     if(tokens[cursor++].tipo == Tipo.CHAVEESQ){
                         if(statementList()){
@@ -144,129 +150,142 @@ fun iterationStmt(): Boolean {
     return false
 }
 
-fun readStmt(): Boolean {
+fun readStmt(): List<Byte> {
     val cursorInicio = cursor
 
     if(tokens[cursor++].tipo == Tipo.READ){
-        if(variable()){
+        val nome = variable()
+        if(nome != null){
             if(tokens[cursor++].tipo == Tipo.PONTOEVIRGULA){
-                return true
+                return gerarCodigoRead(nome)
             }
         }
     }
 
     cursor = cursorInicio
-    return false
+    return emptyList()
 }
 
-fun writeStmt(): Boolean {
+fun writeStmt(): List<Byte> {
     val cursorInicio = cursor
 
     if(tokens[cursor++].tipo == Tipo.WRITE){
-        if(simpleExpression()){
+        val expressao = simpleExpression()
+        if(expressao.isNotEmpty()){
             if(tokens[cursor++].tipo == Tipo.PONTOEVIRGULA){
-                return true
+                return gerarCodigoWrite(expressao)
             }
         }
     }
 
     cursor = cursorInicio
-    return false
+    return emptyList()
 }
 
-fun variable(): Boolean {
-    if(tokens[cursor++].tipo == Tipo.IDENTIFICADOR){
-        return true
+fun variable(): String? {
+    if(tokens[cursor].tipo == Tipo.IDENTIFICADOR){
+        return tokens[cursor++].valor
     }
-    cursor--
-    return false
+    return null
 }
 
-fun simpleExpression(): Boolean {
-    if(!additiveExpression()) return false
+fun simpleExpression(): List<Byte> {
+    var codigo = additiveExpression()
+    if(codigo.isEmpty()) return emptyList()
 
-    while(relop()){
-        if(!additiveExpression()){
-            return false
-        }
-    }
+    var tipo = relop()
+    while(tipo != null){
+        val expressaoDireita = additiveExpression()
+        if(expressaoDireita.isEmpty()) return emptyList()
 
-    return true
-}
+        codigo = gerarCodigoExpressao(codigo, tipo, expressaoDireita)
 
-fun additiveExpression(): Boolean {
-    if(!term()) return false
-
-    while(addop()){
-        if(!term()){
-            return false
-        }
+        tipo = relop()
     }
 
-    return true
+    return codigo
 }
 
-fun addop(): Boolean{
-    val token = tokens[cursor]
-    if(token.tipo == Tipo.SOMA || token.tipo == Tipo.SUBTRACAO){
-        cursor++
-        return true
+fun additiveExpression(): List<Byte> {
+    var codigo = term()
+    if(codigo.isEmpty()) return emptyList()
+
+    var tipo = addop()
+    while(tipo != null){
+        val termoDireita = term()
+        if(termoDireita.isEmpty()) return emptyList()
+        codigo = gerarCodigoExpressao(codigo, tipo, termoDireita)
+
+        tipo = addop()
     }
-    return false
+
+    return codigo
 }
 
-fun relop(): Boolean {
+fun addop(): Tipo? {
+    if(tokens[cursor].tipo == Tipo.SOMA || tokens[cursor].tipo == Tipo.SUBTRACAO){
+        return tokens[cursor++].tipo
+    }
+    return null
+}
+
+fun relop(): Tipo? {
     val token = tokens[cursor]
     if(token.tipo == Tipo.MENORIGUAL || token.tipo == Tipo.MENOR ||
        token.tipo == Tipo.MAIOR      || token.tipo == Tipo.MAIORIGUAL  ||
        token.tipo == Tipo.IGUAL      || token.tipo == Tipo.DIFERENTE){
 
-        cursor++
-        return true
+        return tokens[cursor++].tipo
     }
-    return false
+    return null
 }
 
-fun term(): Boolean {
-    if(!factor()) return false
+fun term(): List<Byte> {
+    var codigo = factor()
+    if(codigo.isEmpty()) return emptyList()
 
-    while(multop()){
-        if(!factor()){
-            return false
-        }
+    var tipo = multop()
+    while(tipo != null){
+        val fatorDireita = factor()
+        if(fatorDireita.isEmpty()) return emptyList()
+
+        codigo = gerarCodigoExpressao(codigo, tipo, fatorDireita)
+
+        tipo = multop()
     }
 
-    return true
+    return codigo
 }
 
-fun multop(): Boolean {
+fun multop(): Tipo? {
     if(tokens[cursor].tipo == Tipo.MULTIPLICAO || tokens[cursor].tipo == Tipo.DIVISAO){
-        cursor++
-        return true
+        return tokens[cursor++].tipo
     }
-    return false
+    return null
 }
 
-fun factor(): Boolean {
+fun factor(): List<Byte> {
 
     if(tokens[cursor].tipo == Tipo.NUMERO){
-        cursor++
-        return true
+        return gerarCodigoNumero(tokens[cursor++].valor)
     }
 
-    if(variable()) return true
+    variable()?.let { nome ->
+        return gerarCodigoVariavel(nome)
+    }
 
     val cursorInicio = cursor
     if(tokens[cursor].tipo == Tipo.PARESQ){
         cursor++
-        if(simpleExpression()){
+        val expressao = simpleExpression()
+        if(expressao.isNotEmpty()){
             if(tokens[cursor].tipo == Tipo.PARDIR){
                 cursor++
-                return true
+                return expressao
             }
         }
 
     }
     cursor = cursorInicio
-    return false
+    return emptyList()
 }

@@ -27,3 +27,18 @@ P = {
     <letter> ::= a | b | … | z | A | B | … | Z  
     <digit> ::= 0 | 1 | … | 9 }
 }
+
+
+While: (Simple Expression) JF (Endereço depois do JMP do fim) (Código) JMP (Endereço do Início do Simple Expression)
+
+If: (Simple Expression) JF (Endereço depois do Código) (Código)
+If Else: (Simple Expression) JF (Endereço do Código do Else) (Código) JMP (Endereço depois do Código do Else) (Código do Else)
+
+Recebe : STO (Endereço da Variável)
+
+Simple Expression: (Alguma coisa que coloca o resultado no topo da pilha)
+                    STO
+                    (Endereço para salvar o resultado da primeira operação)
+                    (Outra coisa que coloca o resultado no topo da pilha)
+                    (Operação)
+                    (Endereço para o Resultado da primeira operação)
