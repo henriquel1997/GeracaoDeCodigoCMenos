@@ -145,15 +145,41 @@ fun gerarCodigoWhile(expressao: List<Byte>, codigoEscopo: List<Byte>): List<Byte
 
     val codigoWhile = expressao.toMutableList()
 
+    //Jump False
     codigoWhile.add(92, false)
     codigoWhile.add(codigo.size + expressao.size + codigoEscopo.size + 4, true)
 
     codigoWhile.addAll(codigoEscopo)
 
+    //Jump
     codigoWhile.add(90, false)
     codigoWhile.add(codigo.size, true)
 
     return codigoWhile
+}
+
+fun gerarCodigoIf(expressao: List<Byte>, codigoEscopoIf: List<Byte>, codigoEscopoElse: List<Byte> = emptyList()): List<Byte> {
+    if(expressao.isEmpty() || codigoEscopoIf.isEmpty()) return emptyList()
+
+    val temElse = codigoEscopoElse.isNotEmpty()
+
+    val codigoIf = expressao.toMutableList()
+
+    //Jump False
+    codigoIf.add(92, false)
+    codigoIf.add(codigo.size + expressao.size + codigoEscopoIf.size + 3 + if(temElse) 3 else 0, true)
+
+    codigoIf.addAll(codigoEscopoIf)
+
+    if(temElse){
+        //Jump
+        codigoIf.add(90, false)
+        codigoIf.add(codigo.size + expressao.size + codigoEscopoIf.size + codigoEscopoElse.size + 6, true)
+
+        codigoIf.addAll(codigoEscopoElse)
+    }
+
+    return codigoIf
 }
 
 fun gerarInicioPrograma(){

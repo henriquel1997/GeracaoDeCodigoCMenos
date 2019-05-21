@@ -13,7 +13,8 @@ val tamanhoMemoriaPrograma = 1000
 var tokens = mutableListOf<Token>()
 
 fun main(){
-    val localArquivo = "C:\\Users\\Henrique\\IdeaProjects\\GeraçãoDeCódigoCMenos\\teste.cm"
+    //val localArquivo = "C:\\Users\\Henrique\\IdeaProjects\\GeraçãoDeCódigoCMenos\\teste.cm"
+    val localArquivo = "/Users/henriquedelima/IdeaProjects/GeracaoDeCodigoCMenos/teste.cm"
 
     val arquivo = File(localArquivo)
     nomePrograma = arquivo.name
@@ -34,6 +35,9 @@ fun main(){
     }
 
     if(program()){
+        println("Sucesso análise sintática.")
         finalizarPrograma()
+    }else{
+        println("Falha na análise sintática.")
     }
 }

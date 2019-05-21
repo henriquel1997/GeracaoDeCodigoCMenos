@@ -4,6 +4,7 @@ fun program(): Boolean {
 
     try {
         gerarInicioPrograma()
+
         if(varDeclarationList()){
             gerarEspacoVariaveis()
         }
@@ -61,25 +62,34 @@ fun statementList(): List<Byte> {
     val codigo = statement().toMutableList()
     if(codigo.isEmpty()) return emptyList()
 
-    var statement = statement()
-    while(statement.isNotEmpty()){
-        codigo += statement
-        statement = statement()
+    if(cursor < tokens.size){
+        var statement = statement()
+        while(statement.isNotEmpty()){
+            codigo += statement
+            statement = if(cursor < tokens.size) statement() else emptyList()
+        }
     }
 
     return codigo
 }
 
 fun statement(): List<Byte> {
-    val expression = expressionStmt()
-    if(expression.isNotEmpty()) return expression
-    //if(selectionStmt()) return true
-    val iteration = iterationStmt()
-    if(iteration.isNotEmpty()) return iteration
+
     val read = readStmt()
     if(read.isNotEmpty()) return read
+
     val write = writeStmt()
     if(write.isNotEmpty()) return write
+
+    val expression = expressionStmt()
+    if(expression.isNotEmpty()) return expression
+
+    val selection = selectionStmt()
+    if(selection.isNotEmpty()) return selection
+
+    val iteration = iterationStmt()
+    if(iteration.isNotEmpty()) return iteration
+
     return emptyList()
 }
 
@@ -101,8 +111,7 @@ fun expressionStmt(): List<Byte> {
     return emptyList()
 }
 
-//TODO: Geração de código do if / else
-fun selectionStmt(): Boolean {
+fun selectionStmt(): List<Byte> {
     val cursorInicio = cursor
 
     if(tokens[cursor++].tipo == Tipo.IF){
@@ -120,14 +129,14 @@ fun selectionStmt(): Boolean {
                                         if (codigoElse.isNotEmpty()) {
                                             if (tokens[cursor++].tipo == Tipo.CHAVEDIR) {
                                                 //Gerar Código do IF ELSE aqui
-                                                return true
+                                                return gerarCodigoIf(expressao, codigoIf, codigoElse)
                                             }
                                         }
                                     }
                                 }else{
                                     //Gerar Código do IF comum aqui
                                     cursor--
-                                    return true
+                                    return gerarCodigoIf(expressao, codigoIf)
                                 }
                             }
                         }
@@ -138,7 +147,7 @@ fun selectionStmt(): Boolean {
     }
 
     cursor = cursorInicio
-    return false
+    return emptyList()
 }
 
 fun iterationStmt(): List<Byte> {
