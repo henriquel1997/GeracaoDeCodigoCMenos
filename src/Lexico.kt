@@ -94,12 +94,10 @@ fun identificarTokenString(string: String, pos: Int, linha: Int): Token? {
         stringEncaixa(string, pos, "if") -> Token(Tipo.IF, "if", linha, pos)
         stringEncaixa(string, pos, "!=") -> Token(Tipo.DIFERENTE, "!=", linha, pos)
         stringEncaixa(string, pos, "int") -> Token(Tipo.INTEIRO, "int", linha, pos)
-        stringEncaixa(string, pos, "void") -> Token(Tipo.VOID, "void", linha, pos)
         stringEncaixa(string, pos, "else") -> Token(Tipo.ELSE, "else", linha, pos)
         stringEncaixa(string, pos, "read") -> Token(Tipo.READ, "read", linha, pos)
         stringEncaixa(string, pos, "write") -> Token(Tipo.WRITE, "write", linha, pos)
         stringEncaixa(string, pos, "while") -> Token(Tipo.WHILE, "while", linha, pos)
-        stringEncaixa(string, pos, "return") -> Token(Tipo.RETURN, "return", linha, pos)
         else -> {
             val subString = getPalavra(pos, string)
             if(subString.isNotEmpty()){

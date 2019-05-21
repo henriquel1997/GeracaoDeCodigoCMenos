@@ -1,21 +1,20 @@
 Gramática - C Menos
 
-Alfabeto = ID, NUM, [, ], int, (, ), vírgula , if, else, while, return, read, write, =, <=, <, >, >=, ==, !=, +, -, *, /, {, }
+Alfabeto = ID, NUM, [, ], int, (, ), vírgula , if, else, while, read, write, =, <=, <, >, >=, ==, !=, +, -, *, /, {, }
 
 P = { 
 	<program> ::= <declaration-list>
 	<declaration-list> ::= <declaration> <declaration-list> | <declaration>
-    * <declaration> ::= <var-declaration> | <statement>
-    * <var-declaration> ::= int <ID> ;
-    * <statement> :: = <expression-stmt> | <selection-stmt> | <iteration-stmt> |  <return-stmt> | <read-stmt> | <write-stmt>
-    * <expression-stmt> ::= <variable> = <simple-expression>  ; | ;
-    * <selection-stmt> ::= if ( <simple-expression> ) { <statement-list> } | if (<simple-expression>) { <statement-list> } else { <statement-list> }
-    * <iteration-stmt> ::= while ( <simple-expression> ) { <statement> }
+    <declaration> ::= <var-declaration> | <statement>
+    <var-declaration> ::= int <ID> ;
+    <statement> :: = <expression-stmt> | <selection-stmt> | <iteration-stmt> |  <return-stmt> | <read-stmt> | <write-stmt>
+    <expression-stmt> ::= <variable> = <simple-expression>  ; | ;
+    <selection-stmt> ::= if ( <simple-expression> ) { <statement-list> } | if (<simple-expression>) { <statement-list> } else { <statement-list> }
+    <iteration-stmt> ::= while ( <simple-expression> ) { <statement-list> }
     <statement-list> ::= <statement> <statement-list> | <statement>
-    * <return-stmt> ::= return ; | return <simple-expression> ;
     <read-stmt> ::= read <variable> ;
-    * <write-stmt> ::= write <simple-expression> ;
-    * <variable> ::= <ID>
+    <write-stmt> ::= write <simple-expression> ;
+    <variable> ::= <ID>
 	<simple-expression> ::= <additive-expression> |  <additive-expression> <relop> <simple-expression>
     <relop> ::= <= | < | > | >= | == | !=  
 	<additive-expression> ::= <term> <addop> <additive-expression> | <term>

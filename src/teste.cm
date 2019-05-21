@@ -1,32 +1,18 @@
+int aa;
+int bb;
+int cc;
+int dd;
+int qre;
 
-int abc (int qwe, int lol){
-	int aa;
-	int bb;
-	int cc;
-	int dd;
-	int zzz[5324];
-	int ee[123];
-	int qre;
+cc = 67;
+qre = 3;
 
-	cc = abc(32, efg(43, 8));
-    qre = 3;
-
-	ee[1] = aa + cc;
-	ee[2] = bb - bb;
-	ee[3] = cc * cc;
-	ee[4] = dd / dd;
-	ee[5] = aa < bb;
-	ee[6] = bb > cc;
-	ee[7] = cc <= dd;
-	ee[8] = dd >= cc;
-
-	read u;
-	write aa == 78;
-
-	return aa;
+if(4){
+    while(aa < cc){
+        read u;
+    }
+}else{
+    dd = 5;
 }
 
-int main(void){
-    int w;
-	return 1;
-}
+write (aa + bb) * 70;
