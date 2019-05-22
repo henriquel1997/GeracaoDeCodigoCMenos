@@ -25,7 +25,7 @@ fun criarVariavel(nome: String, valor: String){
 fun getPosicaoVariavel(nome: String): Int? {
     val pos = variaveis.keys.indexOf(nome)
     return if(pos >= 0){
-        pos + 6
+        (2 * pos) + 6
     }else{
         null
     }
@@ -106,12 +106,14 @@ fun gerarCodigoComparacao(operador: Tipo){
     }
 }
 
-fun gerarCodigoNumero(valor: String){
+fun gerarCodigoNumero(valor: String): Boolean{
     stringToInt(valor)?.let { inteiro ->
         //LDI
         codigo.add(68, false)
         codigo.add(inteiro, true)
+        return true
     }
+    return false
 }
 
 fun gerarCodigoVariavel(nome: String): Boolean {

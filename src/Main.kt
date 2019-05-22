@@ -37,6 +37,8 @@ fun main(){
     if(program()){
         println("Sucesso análise sintática.")
         finalizarPrograma()
+
+        cms.rodarCodigo("$nomePrograma.OBJ")
     }else{
         println("Falha na análise sintática.")
     }

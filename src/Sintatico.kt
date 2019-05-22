@@ -25,16 +25,18 @@ fun varDeclarationList() : Boolean {
 fun varDeclaration(): Boolean {
     val cursorInicio = cursor
 
-    if(tokens[cursor++].tipo == Tipo.INTEIRO){
-        if(tokens[cursor].tipo == Tipo.IDENTIFICADOR){
-            val nome = tokens[cursor].valor
+    if(getToken(cursor++)?.tipo == Tipo.INTEIRO){
+        val identificador = getToken(cursor)
+        if(identificador?.tipo == Tipo.IDENTIFICADOR){
+            val nome = identificador.valor
             cursor++
 
             var numero = "0"
-            if(tokens[cursor].tipo == Tipo.RECEBE){
+            if(getToken(cursor)?.tipo == Tipo.RECEBE){
                 cursor++
-                if(tokens[cursor].tipo == Tipo.NUMERO){
-                    numero = tokens[cursor].valor
+                val tokenNumero = getToken(cursor)
+                if(tokenNumero?.tipo == Tipo.NUMERO){
+                    numero = tokenNumero.valor
                     cursor++
                 }else{
                     cursor = cursorInicio
@@ -42,7 +44,7 @@ fun varDeclaration(): Boolean {
                 }
             }
 
-            if(tokens[cursor++].tipo == Tipo.PONTOEVIRGULA){
+            if(getToken(cursor++)?.tipo == Tipo.PONTOEVIRGULA){
                 criarVariavel(nome, numero)
                 return true
             }
@@ -78,9 +80,9 @@ fun expressionStmt(): Boolean {
 
     val nome = variable()
     if(nome != null){
-        if(tokens[cursor++].tipo == Tipo.RECEBE){
+        if(getToken(cursor++)?.tipo == Tipo.RECEBE){
             if(simpleExpression()){
-                if(tokens[cursor++].tipo == Tipo.PONTOEVIRGULA){
+                if(getToken(cursor++)?.tipo == Tipo.PONTOEVIRGULA){
                     return gerarCodigoRecebe(nome)
                 }
             }
@@ -96,19 +98,19 @@ fun selectionStmt(): Boolean {
     val posicaoInicial = codigo.size
     val cursorInicio = cursor
 
-    if(tokens[cursor++].tipo == Tipo.IF){
-        if(tokens[cursor++].tipo == Tipo.PARESQ){
+    if(getToken(cursor++)?.tipo == Tipo.IF){
+        if(getToken(cursor++)?.tipo == Tipo.PARESQ){
             if(simpleExpression()){
-                if(tokens[cursor++].tipo == Tipo.PARDIR){
-                    if(tokens[cursor++].tipo == Tipo.CHAVEESQ){
+                if(getToken(cursor++)?.tipo == Tipo.PARDIR){
+                    if(getToken(cursor++)?.tipo == Tipo.CHAVEESQ){
                         val posFimIf = gerarCodigoIf()
                         if(statementList()){
-                            if(tokens[cursor++].tipo == Tipo.CHAVEDIR){
-                                if(tokens[cursor++].tipo == Tipo.ELSE){
-                                    if(tokens[cursor++].tipo == Tipo.CHAVEESQ) {
+                            if(getToken(cursor++)?.tipo == Tipo.CHAVEDIR){
+                                if(getToken(cursor++)?.tipo == Tipo.ELSE){
+                                    if(getToken(cursor++)?.tipo == Tipo.CHAVEESQ) {
                                         val posFimElse = gerarCodigoElse()
                                         if (statementList()) {
-                                            if (tokens[cursor++].tipo == Tipo.CHAVEDIR) {
+                                            if (getToken(cursor++)?.tipo == Tipo.CHAVEDIR) {
                                                 //Gerar Código do IF ELSE aqui
                                                 adicionarNaPosicao(posFimIf, codigo.size)
                                                 adicionarNaPosicao(posFimElse, codigo.size)
@@ -139,14 +141,14 @@ fun iterationStmt(): Boolean {
     val posicaoInicial = codigo.size
     val cursorInicio = cursor
 
-    if(tokens[cursor++].tipo == Tipo.WHILE){
-        if(tokens[cursor++].tipo == Tipo.PARESQ){
+    if(getToken(cursor++)?.tipo == Tipo.WHILE){
+        if(getToken(cursor++)?.tipo == Tipo.PARESQ){
             if(simpleExpression()){
-                if(tokens[cursor++].tipo == Tipo.PARDIR){
-                    if(tokens[cursor++].tipo == Tipo.CHAVEESQ){
+                if(getToken(cursor++)?.tipo == Tipo.PARDIR){
+                    if(getToken(cursor++)?.tipo == Tipo.CHAVEESQ){
                         val posicao = gerarCodigoWhileInicio()
                         if(statementList()){
-                            if(tokens[cursor++].tipo == Tipo.CHAVEDIR){
+                            if(getToken(cursor++)?.tipo == Tipo.CHAVEDIR){
                                 gerarCodigoWhileFim(posicaoInicial)
                                 adicionarNaPosicao(posicao, codigo.size)
                                 return true
@@ -166,10 +168,10 @@ fun iterationStmt(): Boolean {
 fun readStmt(): Boolean {
     val cursorInicio = cursor
 
-    if(tokens[cursor++].tipo == Tipo.READ){
+    if(getToken(cursor++)?.tipo == Tipo.READ){
         val nome = variable()
         if(nome != null){
-            if(tokens[cursor++].tipo == Tipo.PONTOEVIRGULA){
+            if(getToken(cursor++)?.tipo == Tipo.PONTOEVIRGULA){
                 return gerarCodigoRead(nome)
             }
         }
@@ -182,9 +184,9 @@ fun readStmt(): Boolean {
 fun writeStmt(): Boolean {
     val cursorInicio = cursor
 
-    if(tokens[cursor++].tipo == Tipo.WRITE){
+    if(getToken(cursor++)?.tipo == Tipo.WRITE){
         if(simpleExpression()){
-            if(tokens[cursor++].tipo == Tipo.PONTOEVIRGULA){
+            if(getToken(cursor++)?.tipo == Tipo.PONTOEVIRGULA){
                 gerarCodigoWrite()
                 return true
             }
@@ -196,8 +198,8 @@ fun writeStmt(): Boolean {
 }
 
 fun variable(): String? {
-    if(tokens[cursor].tipo == Tipo.IDENTIFICADOR){
-        return tokens[cursor++].valor
+    if(getToken(cursor)?.tipo == Tipo.IDENTIFICADOR){
+        return getToken(cursor++)?.valor
     }
     return null
 }
@@ -248,19 +250,19 @@ fun additiveExpression(): Boolean {
 }
 
 fun addop(): Tipo? {
-    if(tokens[cursor].tipo == Tipo.SOMA || tokens[cursor].tipo == Tipo.SUBTRACAO){
-        return tokens[cursor++].tipo
+    if(getToken(cursor)?.tipo == Tipo.SOMA || getToken(cursor)?.tipo == Tipo.SUBTRACAO){
+        return getToken(cursor++)?.tipo
     }
     return null
 }
 
 fun relop(): Tipo? {
-    val token = tokens[cursor]
-    if(token.tipo == Tipo.MENORIGUAL || token.tipo == Tipo.MENOR ||
-       token.tipo == Tipo.MAIOR      || token.tipo == Tipo.MAIORIGUAL  ||
-       token.tipo == Tipo.IGUAL      || token.tipo == Tipo.DIFERENTE){
-
-        return tokens[cursor++].tipo
+    val token = getToken(cursor)
+    if(token?.tipo == Tipo.MENORIGUAL || token?.tipo == Tipo.MENOR ||
+       token?.tipo == Tipo.MAIOR      || token?.tipo == Tipo.MAIORIGUAL  ||
+       token?.tipo == Tipo.IGUAL      || token?.tipo == Tipo.DIFERENTE){
+        cursor++
+        return token.tipo
     }
     return null
 }
@@ -289,17 +291,18 @@ fun term(): Boolean {
 }
 
 fun multop(): Tipo? {
-    if(tokens[cursor].tipo == Tipo.MULTIPLICAO || tokens[cursor].tipo == Tipo.DIVISAO){
-        return tokens[cursor++].tipo
+    if(getToken(cursor)?.tipo == Tipo.MULTIPLICAO || getToken(cursor)?.tipo == Tipo.DIVISAO){
+        return getToken(cursor++)?.tipo
     }
     return null
 }
 
 fun factor(): Boolean {
 
-    if(tokens[cursor].tipo == Tipo.NUMERO){
-        gerarCodigoNumero(tokens[cursor++].valor)
-        return true
+    val numero = getToken(cursor)
+    if(numero?.tipo == Tipo.NUMERO){
+        cursor++
+        return gerarCodigoNumero(numero.valor)
     }
 
     variable()?.let { nome ->
@@ -308,10 +311,10 @@ fun factor(): Boolean {
 
     val posicaoInicio = codigo.size
     val cursorInicio = cursor
-    if(tokens[cursor].tipo == Tipo.PARESQ){
+    if(getToken(cursor)?.tipo == Tipo.PARESQ){
         cursor++
         if(simpleExpression()){
-            if(tokens[cursor].tipo == Tipo.PARDIR){
+            if(getToken(cursor)?.tipo == Tipo.PARDIR){
                 cursor++
                 return true
             }
@@ -322,4 +325,11 @@ fun factor(): Boolean {
     desfazerCodigo(posicaoInicio)
     cursor = cursorInicio
     return false
+}
+
+fun getToken(position: Int): Token? {
+    if(position < tokens.size){
+        return tokens[position]
+    }
+    return null
 }

@@ -533,7 +533,7 @@ public class cms {
 		}
 		// OUT
 		case 0x58 :{
-			System.out.println("Sa�da do CMS *****>> "+POP());
+			System.out.println((POP()/256));
 			break;
 		}
 		case 0x59 :{
@@ -595,9 +595,13 @@ public class cms {
 	}
 
 	public static void main(String[] args){
+		rodarCodigo("FONTEO01.OBJ");
+	}
+
+	public static void rodarCodigo(String localPrograma){
 		FIM_PROG = false;
-	    cms cms = new cms();
-	    cms.carga_programa("FONTEO01.OBJ");
-	    while (!FIM_PROG)  cms.hardware();
+		cms cms = new cms();
+		cms.carga_programa(localPrograma);
+		while (!FIM_PROG)  cms.hardware();
 	}
 }
