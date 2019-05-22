@@ -9,7 +9,7 @@ class Token (val tipo: Tipo, val valor: String, val linha:Int, val coluna:Int)
 
 var nomePrograma = "programa"
 var programa = ""
-val tamanhoMemoriaPrograma = 1000
+const val tamanhoMemoriaPrograma = 4096
 var tokens = mutableListOf<Token>()
 
 fun main(){

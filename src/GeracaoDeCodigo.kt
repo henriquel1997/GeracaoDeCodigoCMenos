@@ -114,13 +114,14 @@ fun gerarCodigoNumero(valor: String){
     }
 }
 
-fun gerarCodigoVariavel(nome: String){
+fun gerarCodigoVariavel(nome: String): Boolean {
     getPosicaoVariavel(nome)?.let { posicao ->
         //LOAD
         codigo.add(64, false)
         codigo.add(posicao, true)
-
+        return true
     }
+    return false
 }
 
 fun gerarCodigoRead(nomeVariavel: String): Boolean {

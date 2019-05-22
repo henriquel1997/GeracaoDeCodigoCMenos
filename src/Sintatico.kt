@@ -285,7 +285,7 @@ fun term(): Boolean {
         tipo = multop()
     }
 
-    return false
+    return true
 }
 
 fun multop(): Tipo? {
@@ -303,8 +303,7 @@ fun factor(): Boolean {
     }
 
     variable()?.let { nome ->
-        gerarCodigoVariavel(nome)
-        return true
+        return gerarCodigoVariavel(nome)
     }
 
     val posicaoInicio = codigo.size
