@@ -9,12 +9,7 @@ fun program(): Boolean {
             gerarEspacoVariaveis()
         }
 
-        val statements = statementList()
-
-        if(statements.isNotEmpty()){
-            codigo += statements
-            return true
-        }
+        return statementList()
     }catch (e: IndexOutOfBoundsException){}
 
     return false
@@ -58,85 +53,74 @@ fun varDeclaration(): Boolean {
     return false
 }
 
-fun statementList(): List<Byte> {
-    val codigo = statement().toMutableList()
-    if(codigo.isEmpty()) return emptyList()
+fun statementList(): Boolean {
+    if(!statement()) return false
 
-    if(cursor < tokens.size){
-        var statement = statement()
-        while(statement.isNotEmpty()){
-            codigo += statement
-            statement = if(cursor < tokens.size) statement() else emptyList()
-        }
-    }
+    while(cursor < tokens.size && statement()){}
 
-    return codigo
+    return true
 }
 
-fun statement(): List<Byte> {
+fun statement(): Boolean {
 
-    val read = readStmt()
-    if(read.isNotEmpty()) return read
+    if(readStmt()) return true
+    if(writeStmt()) return true
+    if(expressionStmt()) return true
+    if(selectionStmt()) return true
+    if(iterationStmt()) return true
 
-    val write = writeStmt()
-    if(write.isNotEmpty()) return write
-
-    val expression = expressionStmt()
-    if(expression.isNotEmpty()) return expression
-
-    val selection = selectionStmt()
-    if(selection.isNotEmpty()) return selection
-
-    val iteration = iterationStmt()
-    if(iteration.isNotEmpty()) return iteration
-
-    return emptyList()
+    return false
 }
 
-fun expressionStmt(): List<Byte> {
+fun expressionStmt(): Boolean {
+    val posicaoInicial = codigo.size
     val cursorInicio = cursor
 
     val nome = variable()
     if(nome != null){
         if(tokens[cursor++].tipo == Tipo.RECEBE){
-            val expressao = simpleExpression()
-            if(expressao.isNotEmpty()){
+            if(simpleExpression()){
                 if(tokens[cursor++].tipo == Tipo.PONTOEVIRGULA){
                     return gerarCodigoRecebe(nome)
                 }
             }
         }
     }
+
+    desfazerCodigo(posicaoInicial)
     cursor = cursorInicio
-    return emptyList()
+    return false
 }
 
-fun selectionStmt(): List<Byte> {
+fun selectionStmt(): Boolean {
+    val posicaoInicial = codigo.size
     val cursorInicio = cursor
 
     if(tokens[cursor++].tipo == Tipo.IF){
         if(tokens[cursor++].tipo == Tipo.PARESQ){
-            val expressao = simpleExpression()
-            if(expressao.isNotEmpty()){
+            if(simpleExpression()){
                 if(tokens[cursor++].tipo == Tipo.PARDIR){
                     if(tokens[cursor++].tipo == Tipo.CHAVEESQ){
-                        val codigoIf = statementList()
-                        if(codigoIf.isNotEmpty()){
+                        val posFimIf = gerarCodigoIf()
+                        if(statementList()){
                             if(tokens[cursor++].tipo == Tipo.CHAVEDIR){
                                 if(tokens[cursor++].tipo == Tipo.ELSE){
                                     if(tokens[cursor++].tipo == Tipo.CHAVEESQ) {
-                                        val codigoElse = statementList()
-                                        if (codigoElse.isNotEmpty()) {
+                                        val posFimElse = gerarCodigoElse()
+                                        if (statementList()) {
                                             if (tokens[cursor++].tipo == Tipo.CHAVEDIR) {
                                                 //Gerar Código do IF ELSE aqui
-                                                return gerarCodigoIf(expressao, codigoIf, codigoElse)
+                                                adicionarNaPosicao(posFimIf, codigo.size)
+                                                adicionarNaPosicao(posFimElse, codigo.size)
+                                                return true
                                             }
                                         }
                                     }
                                 }else{
                                     //Gerar Código do IF comum aqui
                                     cursor--
-                                    return gerarCodigoIf(expressao, codigoIf)
+                                    adicionarNaPosicao(posFimIf, codigo.size)
+                                    return true
                                 }
                             }
                         }
@@ -146,23 +130,26 @@ fun selectionStmt(): List<Byte> {
         }
     }
 
+    desfazerCodigo(posicaoInicial)
     cursor = cursorInicio
-    return emptyList()
+    return false
 }
 
-fun iterationStmt(): List<Byte> {
+fun iterationStmt(): Boolean {
+    val posicaoInicial = codigo.size
     val cursorInicio = cursor
 
     if(tokens[cursor++].tipo == Tipo.WHILE){
         if(tokens[cursor++].tipo == Tipo.PARESQ){
-            val expressao = simpleExpression()
-            if(expressao.isNotEmpty()){
+            if(simpleExpression()){
                 if(tokens[cursor++].tipo == Tipo.PARDIR){
                     if(tokens[cursor++].tipo == Tipo.CHAVEESQ){
-                        val codigo = statementList()
-                        if(codigo.isNotEmpty()){
+                        val posicao = gerarCodigoWhileInicio()
+                        if(statementList()){
                             if(tokens[cursor++].tipo == Tipo.CHAVEDIR){
-                                return gerarCodigoWhile(expressao, codigo)
+                                gerarCodigoWhileFim(posicaoInicial)
+                                adicionarNaPosicao(posicao, codigo.size)
+                                return true
                             }
                         }
                     }
@@ -171,11 +158,12 @@ fun iterationStmt(): List<Byte> {
         }
     }
 
+    desfazerCodigo(posicaoInicial)
     cursor = cursorInicio
-    return emptyList()
+    return false
 }
 
-fun readStmt(): List<Byte> {
+fun readStmt(): Boolean {
     val cursorInicio = cursor
 
     if(tokens[cursor++].tipo == Tipo.READ){
@@ -188,23 +176,23 @@ fun readStmt(): List<Byte> {
     }
 
     cursor = cursorInicio
-    return emptyList()
+    return false
 }
 
-fun writeStmt(): List<Byte> {
+fun writeStmt(): Boolean {
     val cursorInicio = cursor
 
     if(tokens[cursor++].tipo == Tipo.WRITE){
-        val expressao = simpleExpression()
-        if(expressao.isNotEmpty()){
+        if(simpleExpression()){
             if(tokens[cursor++].tipo == Tipo.PONTOEVIRGULA){
-                return gerarCodigoWrite(expressao)
+                gerarCodigoWrite()
+                return true
             }
         }
     }
 
     cursor = cursorInicio
-    return emptyList()
+    return false
 }
 
 fun variable(): String? {
@@ -214,37 +202,49 @@ fun variable(): String? {
     return null
 }
 
-fun simpleExpression(): List<Byte> {
-    var codigo = additiveExpression()
-    if(codigo.isEmpty()) return emptyList()
+fun simpleExpression(): Boolean {
+    val tamanhoInicial = codigo.size
+    if(!additiveExpression()) return false
 
     var tipo = relop()
     while(tipo != null){
-        val expressaoDireita = additiveExpression()
-        if(expressaoDireita.isEmpty()) return emptyList()
 
-        codigo = gerarCodigoExpressao(codigo, tipo, expressaoDireita)
+        if(!additiveExpression()){
+            desfazerCodigo(tamanhoInicial)
+            return false
+        }
+
+        gerarCodigoComparacao(tipo)
 
         tipo = relop()
     }
 
-    return codigo
+    return true
 }
 
-fun additiveExpression(): List<Byte> {
-    var codigo = term()
-    if(codigo.isEmpty()) return emptyList()
+fun additiveExpression(): Boolean {
+    val tamanhoInicial = codigo.size
+
+    if(!term()) return false
 
     var tipo = addop()
     while(tipo != null){
-        val termoDireita = term()
-        if(termoDireita.isEmpty()) return emptyList()
-        codigo = gerarCodigoExpressao(codigo, tipo, termoDireita)
+
+        val posSalvar = gerarCodigoSalvarResultado()
+
+        if(!term()){
+            desfazerCodigo(tamanhoInicial)
+            return false
+        }
+
+        val posicaoPrimeiroResultado = gerarCodigoOperacaoMatematica(tipo)
+
+        adicionarNaPosicao(posSalvar, posicaoPrimeiroResultado)
 
         tipo = addop()
     }
 
-    return codigo
+    return true
 }
 
 fun addop(): Tipo? {
@@ -265,21 +265,27 @@ fun relop(): Tipo? {
     return null
 }
 
-fun term(): List<Byte> {
-    var codigo = factor()
-    if(codigo.isEmpty()) return emptyList()
+fun term(): Boolean {
+    val tamanhoInicial = codigo.size
+
+    if(!factor()) return false
 
     var tipo = multop()
     while(tipo != null){
-        val fatorDireita = factor()
-        if(fatorDireita.isEmpty()) return emptyList()
 
-        codigo = gerarCodigoExpressao(codigo, tipo, fatorDireita)
+        gerarCodigoSalvarResultado()
+
+        if(!factor()){
+            desfazerCodigo(tamanhoInicial)
+            return false
+        }
+
+        gerarCodigoOperacaoMatematica(tipo)
 
         tipo = multop()
     }
 
-    return codigo
+    return false
 }
 
 fun multop(): Tipo? {
@@ -289,28 +295,32 @@ fun multop(): Tipo? {
     return null
 }
 
-fun factor(): List<Byte> {
+fun factor(): Boolean {
 
     if(tokens[cursor].tipo == Tipo.NUMERO){
-        return gerarCodigoNumero(tokens[cursor++].valor)
+        gerarCodigoNumero(tokens[cursor++].valor)
+        return true
     }
 
     variable()?.let { nome ->
-        return gerarCodigoVariavel(nome)
+        gerarCodigoVariavel(nome)
+        return true
     }
 
+    val posicaoInicio = codigo.size
     val cursorInicio = cursor
     if(tokens[cursor].tipo == Tipo.PARESQ){
         cursor++
-        val expressao = simpleExpression()
-        if(expressao.isNotEmpty()){
+        if(simpleExpression()){
             if(tokens[cursor].tipo == Tipo.PARDIR){
                 cursor++
-                return expressao
+                return true
             }
         }
 
     }
+
+    desfazerCodigo(posicaoInicio)
     cursor = cursorInicio
-    return emptyList()
+    return false
 }

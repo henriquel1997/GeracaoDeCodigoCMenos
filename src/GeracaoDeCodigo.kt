@@ -3,8 +3,18 @@ import java.lang.NumberFormatException
 import java.nio.ByteBuffer
 import kotlin.experimental.and
 
-val codigo = mutableListOf<Byte>()
+var codigo = mutableListOf<Byte>()
 val variaveis = hashMapOf<String, Int>()
+
+fun desfazerCodigo(tamanhoAnteriorCodigo: Int){
+    codigo = codigo.subList(0, tamanhoAnteriorCodigo)
+}
+
+fun adicionarNaPosicao(posicao: Int, valor: Int){
+    val bytes = intToByteList(valor)
+    codigo[posicao] = bytes[0]
+    codigo[posicao + 1] = bytes[1]
+}
 
 fun criarVariavel(nome: String, valor: String){
     if(!variaveis.contains(nome)){
@@ -21,165 +31,142 @@ fun getPosicaoVariavel(nome: String): Int? {
     }
 }
 
-fun gerarCodigoRecebe(nomeVariavel: String): List<Byte> {
-    val codigo = mutableListOf<Byte>()
+fun gerarCodigoRecebe(nomeVariavel: String): Boolean {
     getPosicaoVariavel(nomeVariavel)?.let { pos ->
         codigo.add(65, false)
         codigo.add(pos, true)
+        return true
     }
-    return codigo
+    return false
 }
 
-fun gerarCodigoExpressao(ladoEsquerdo: List<Byte>, operador: Tipo, ladoDireito: List<Byte>): List<Byte> {
-    val codigoExpressao = mutableListOf<Byte>()
-
-    if(ladoEsquerdo.isNotEmpty() && ladoDireito.isNotEmpty()){
-        codigoExpressao += ladoEsquerdo
-
-        if(operador == Tipo.SOMA || operador == Tipo.SUBTRACAO || operador == Tipo.MULTIPLICAO || operador == Tipo.DIVISAO){
-            //STORE
-            codigoExpressao.add(65, false)
-            val pos = codigo.size + ladoEsquerdo.size + ladoDireito.size + 4
-            codigoExpressao.add(pos, true)
-        }
-
-        codigoExpressao += ladoDireito
-
-        when(operador){
-            Tipo.SOMA -> {
-                codigoExpressao.add(20, false)
-                codigoExpressao.add(0, true)
-            }
-
-            Tipo.SUBTRACAO -> {
-                codigoExpressao.add(21, false)
-                codigoExpressao.add(0, true)
-            }
-
-            Tipo.MULTIPLICAO -> {
-                codigoExpressao.add(22, false)
-                codigoExpressao.add(0, true)
-            }
-
-            Tipo.DIVISAO -> {
-                codigoExpressao.add(23, false)
-                codigoExpressao.add(255, true)
-            }
-
-            Tipo.IGUAL -> {
-                codigoExpressao.add(32, false)
-            }
-
-            Tipo.DIFERENTE -> {
-                codigoExpressao.add(33, false)
-            }
-
-            Tipo.MAIOR -> {
-                codigoExpressao.add(34, false)
-            }
-
-            Tipo.MAIORIGUAL -> {
-                codigoExpressao.add(35, false)
-            }
-
-            Tipo.MENOR -> {
-                codigoExpressao.add(36, false)
-            }
-
-            Tipo.MENORIGUAL -> {
-                codigoExpressao.add(37, false)
-            }
-
-            else -> return listOf()
-        }
-    }
-
-    return codigoExpressao
+fun gerarCodigoSalvarResultado(): Int {
+    //STORE - Guarda o topo da pilha como inteiro para realizar a operação matemática
+    codigo.add(65, false)
+    codigo.add(0, true)
+    //Retorna a posição no código onde deve ser escrito o parametro da operação
+    return codigo.size - 2
 }
 
-fun gerarCodigoNumero(valor: String): List<Byte> {
-    val codigo = mutableListOf<Byte>()
+fun gerarCodigoOperacaoMatematica(operador: Tipo): Int {
+    when(operador){
+        Tipo.SOMA -> {
+            codigo.add(20, false)
+            codigo.add(0, true)
+        }
+
+        Tipo.SUBTRACAO -> {
+            codigo.add(21, false)
+            codigo.add(0, true)
+        }
+
+        Tipo.MULTIPLICAO -> {
+            codigo.add(22, false)
+            codigo.add(0, true)
+        }
+
+        Tipo.DIVISAO -> {
+            codigo.add(23, false)
+            codigo.add(255, true)
+        }
+
+        else -> {}
+    }
+
+    return codigo.size - 2
+}
+
+fun gerarCodigoComparacao(operador: Tipo){
+    when(operador){
+        Tipo.IGUAL -> {
+            codigo.add(32, false)
+        }
+
+        Tipo.DIFERENTE -> {
+            codigo.add(33, false)
+        }
+
+        Tipo.MAIOR -> {
+            codigo.add(34, false)
+        }
+
+        Tipo.MAIORIGUAL -> {
+            codigo.add(35, false)
+        }
+
+        Tipo.MENOR -> {
+            codigo.add(36, false)
+        }
+
+        Tipo.MENORIGUAL -> {
+            codigo.add(37, false)
+        }
+
+        else -> {}
+    }
+}
+
+fun gerarCodigoNumero(valor: String){
     stringToInt(valor)?.let { inteiro ->
         //LDI
         codigo.add(68, false)
         codigo.add(inteiro, true)
     }
-    return codigo
 }
 
-fun gerarCodigoVariavel(nome: String): List<Byte> {
-    val codigo = mutableListOf<Byte>()
+fun gerarCodigoVariavel(nome: String){
     getPosicaoVariavel(nome)?.let { posicao ->
         //LOAD
         codigo.add(64, false)
         codigo.add(posicao, true)
 
     }
-    return codigo
 }
 
-fun gerarCodigoRead(nomeVariavel: String): List<Byte> {
-    val codigo = mutableListOf<Byte>()
+fun gerarCodigoRead(nomeVariavel: String): Boolean {
     getPosicaoVariavel(nomeVariavel)?.let { posicao ->
         //INPUT
         codigo.add(87, false)
         //STORE
         codigo.add(65, false)
         codigo.add(posicao, true)
+        return true
     }
-    return codigo
+    return false
 }
 
-fun gerarCodigoWrite(expressao: List<Byte>): List<Byte> {
-    val codigo = expressao.toMutableList()
-    if(codigo.isNotEmpty()){
-        //OUTPUT
-        codigo.add(88, false)
-    }
-    return codigo
+fun gerarCodigoWrite(){
+    //OUTPUT
+    codigo.add(88, false)
 }
 
-fun gerarCodigoWhile(expressao: List<Byte>, codigoEscopo: List<Byte>): List<Byte> {
-
-    if(expressao.isEmpty() || codigoEscopo.isEmpty()) return emptyList()
-
-    val codigoWhile = expressao.toMutableList()
-
+fun gerarCodigoWhileInicio(): Int{
     //Jump False
-    codigoWhile.add(92, false)
-    codigoWhile.add(codigo.size + expressao.size + codigoEscopo.size + 4, true)
+    codigo.add(92, false)
+    codigo.add(0, true)
 
-    codigoWhile.addAll(codigoEscopo)
 
+    return codigo.size -2
+}
+
+fun gerarCodigoWhileFim(inicioWhile: Int){
     //Jump
-    codigoWhile.add(90, false)
-    codigoWhile.add(codigo.size, true)
-
-    return codigoWhile
+    codigo.add(90, false)
+    codigo.add(inicioWhile, true)
 }
 
-fun gerarCodigoIf(expressao: List<Byte>, codigoEscopoIf: List<Byte>, codigoEscopoElse: List<Byte> = emptyList()): List<Byte> {
-    if(expressao.isEmpty() || codigoEscopoIf.isEmpty()) return emptyList()
-
-    val temElse = codigoEscopoElse.isNotEmpty()
-
-    val codigoIf = expressao.toMutableList()
-
+fun gerarCodigoIf(): Int {
     //Jump False
-    codigoIf.add(92, false)
-    codigoIf.add(codigo.size + expressao.size + codigoEscopoIf.size + 3 + if(temElse) 3 else 0, true)
+    codigo.add(92, false)
+    codigo.add(0, true)
+    return codigo.size - 2
+}
 
-    codigoIf.addAll(codigoEscopoIf)
-
-    if(temElse){
-        //Jump
-        codigoIf.add(90, false)
-        codigoIf.add(codigo.size + expressao.size + codigoEscopoIf.size + codigoEscopoElse.size + 6, true)
-
-        codigoIf.addAll(codigoEscopoElse)
-    }
-
-    return codigoIf
+fun gerarCodigoElse(): Int {
+    //Jump
+    codigo.add(90, false)
+    codigo.add(0, true)
+    return codigo.size - 2
 }
 
 fun gerarInicioPrograma(){
